@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/Events.cpp.o -c /home/emmmPad/c-mindustry/src/arc/Events.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/Events.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/main.cpp.o -c /home/emmmPad/c-mindustry/src/main.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/main.cpp"
+}
+]

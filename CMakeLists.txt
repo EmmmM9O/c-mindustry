@@ -4,6 +4,7 @@ SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++") # 填写绝对路径
 set(CMAKE_CXX_STANDARD 20)
 set(BUILD_DIR "./build/.")
 add_compile_options(-std=c++2a)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 file(GLOB_RECURSE DIR_SRCS 
 	"${PROJECT_SOURCE_DIR}/src/*.h"
 	"${PROJECT_SOURCE_DIR}/src/*.cpp"
