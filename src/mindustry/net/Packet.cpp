@@ -1,5 +1,8 @@
 #include <boost/any.hpp>
 #include "./NetConnection.cpp"
+#include "../../arc/util/io/Writes.cpp"
+#include "../../arc/util/io/Reads.cpp"
+
 namespace mindustry {
     namespace net {
         class Packet{
@@ -7,9 +10,9 @@ namespace mindustry {
             static const int priorityLow =8;
             static const int priorityHigh=2;
             static const int priorityNormal=1;
-            virtual void read(boost::any &read);
-            virtual void write(boost::any &write);
-            virtual void read(boost::any &readr,int length){
+            virtual void read(arc::util::io::Reads &read);
+            virtual void write(arc::util::io::Writes &write);
+            virtual void read(arc::util::io::Reads &readr,int length){
                 read(readr);
             }
             virtual void handled();

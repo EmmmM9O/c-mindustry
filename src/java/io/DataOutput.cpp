@@ -1,8 +1,11 @@
+#pragma once
+#include <string>
 #include <vector>
 typedef unsigned char byte;
 namespace java{
     namespace io{
         class DataOutput{
+            public:
             std::vector<byte> byteStream;
             template<typename T>
             void WriteValue(T &val){
@@ -15,6 +18,18 @@ namespace java{
             }
             void WriteInt(int val){
                 WriteValue(val);
+            }
+            void WriteByte(byte b){
+                WriteValue(b);
+            }
+            void WriteShort(short s){
+                WriteValue(s);
+            }
+            void Write(byte s[]){
+                WriteValue(s);
+            }
+            void writeUTF(std::string str){
+                WriteValue(str);
             }
         };
     }
