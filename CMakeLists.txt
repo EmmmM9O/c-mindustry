@@ -12,7 +12,7 @@ file(GLOB_RECURSE DIR_SRCS
 	"${PROJECT_SOURCE_DIR}/src/*.cc"
 )
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/build/")
-add_executable(${CMAKE_PROJECT_NAME} ${DIR_SRCS})
+add_executable(${CMAKE_PROJECT_NAME} "src/main.cpp")
 
 add_custom_command(
 	TARGET ${CMAKE_PROJECT_NAME}

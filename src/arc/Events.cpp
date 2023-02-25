@@ -18,25 +18,26 @@ namespace arc{
     class _EventType_{
 
     };
-    class Events{
+    class _Events_{
+        private:
+        std::map<std::string,std::forward_list<boost::any>> events;
         public:
-        static std::map<std::string,std::forward_list<boost::any>> events;
         template<EnumType T,Runnable R>
-        static void on(T t,R func){
+        void on(T t,R func){
             events[std::to_string((int)t)].push_front((void(*)())func);
         }
         template<EventType T,Func<T> R>
-        static void on(T _,R func){
+         void on(T _,R func){
             events[typeid(T).name()].push_front((void(*)(T))func);
         }
         template<EventType T,Runnable R>
-        static void run(T _,R func){
+        void run(T _,R func){
             events[typeid(T).name()].push_front((void(*)(T))[&func](T _)->void{
                 func();
             });
         }
         template<typename T>
-        static void fire(T _,T packet){
+        void fire(T _,T packet){
             auto list=events[typeid(T).name()];
             for(auto i=list.begin();i!=list.end();i++){
                 try{
@@ -47,11 +48,11 @@ namespace arc{
             }
         }
         template<EventType T>
-        static void fire(T packet){
+        void fire(T packet){
             fire(packet.Class,packet);
         }
         template<EnumType T>
-        static void fire(T t){
+        void fire(T t){
             auto list=events[std::to_string((int)t)];
             for(auto i=list.begin();i!=list.end();i++){
                 try{
@@ -61,10 +62,14 @@ namespace arc{
                 }
             }
         }
-        ~Events(){
+        _Events_(){
+            events=std::map<std::string,std::forward_list<boost::any>>();
+        }
+        ~_Events_(){
             events.clear();
         }
     };
+    std::unique_ptr<_Events_> Events(new _Events_());
 }
 /*
 extern std::map<std::string,std::forward_list<boost::any>> arc::Events::events

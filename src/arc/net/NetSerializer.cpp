@@ -14,7 +14,7 @@ namespace arc {
 
             }
             /*
-            int readLength(java::nio::ByteBuffer buffer){
+            int readLength(ByteBuffer buffer){
                 return buffer.getShort();
             }*/
         };

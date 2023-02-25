@@ -6,6 +6,9 @@ namespace java{
     namespace io{
         class DataOutput{
             public:
+            DataOutput(){
+                byteStream=std::vector<byte>();
+            }
             std::vector<byte> byteStream;
             template<typename T>
             void WriteValue(T &val){
@@ -30,6 +33,13 @@ namespace java{
             }
             void writeUTF(std::string str){
                 WriteValue(str);
+            }
+            std::string _str(){
+                std::string k="";
+                for(auto c:byteStream){
+                    k+=c;
+                }
+                return k;
             }
         };
     }
