@@ -13,10 +13,10 @@ namespace arc {
             void writeLength(java::nio::ByteBuffer buffer, int length){
 
             }
-            /*
-            int readLength(ByteBuffer buffer){
-                return buffer.getShort();
-            }*/
+            
+            int readLength(java::nio::ByteBuffer buffer){
+                return buffer.ReadShort();
+            }
         };
     }
 }

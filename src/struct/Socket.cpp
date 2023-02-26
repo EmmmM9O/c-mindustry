@@ -1,6 +1,8 @@
+#pragma once
 #include <algorithm>
 #include <cstddef>
 #include <cstdio>
+#include <exception>
 #include <stdexcept>
 #include <string>
 #include <sys/socket.h>
@@ -11,9 +13,23 @@
 #include <unistd.h>
 #include <vector>
 #include <iostream>
+#include <regex>
 #include "../arc/Events.cpp"
+#include <netdb.h>
+
+
 namespace Struct{
-    
+    class HostErr:public std::exception{
+        const char * what() const throw(){
+            return "Cann't get ip by the host:";
+        }
+    };
+    /*
+    class TimeOut :public std::exception{
+        const char * what() const throw(){
+            return "Socket Time Out!";
+        }
+    };*/
     enum class domain{
         IPV6=AF_INET6,IPV4=AF_INET
     };
@@ -22,10 +38,23 @@ namespace Struct{
     };
     class Socket{
         public:
-        static const int BUFFER_SIZE=2048;
+        static const std::regex IPV4R;
+        static const int BUFFER_SIZE=1024;
         int id;
         bool connectd=false;
         struct sockaddr_in servaddr;
+        std::string getIpByHost(std::string str){
+            auto a=gethostbyname(str.data());
+            if(a==NULL){
+                throw HostErr();
+            }else{
+                std::string ip="";
+                for(int i=0;a->h_addr_list[i];i++){
+                    ip=inet_ntoa(*(struct in_addr*)a->h_addr_list[i]);
+                }
+                return ip;
+            }
+        }
         Socket(domain dom,type t,int protocol){
             id=socket((int)dom,(int)t,protocol);
             servaddr.sin_family=(int)dom;
@@ -63,7 +92,14 @@ namespace Struct{
         }
         void connect(int port,std::string host){
             if(!connectd){
-                
+                std::smatch s;
+                if(!std::regex_match(host,s,IPV4R)){
+                    try{
+                        host=getIpByHost(host);
+                    }catch(HostErr &e){
+                        throw e;
+                    }
+                }
                 servaddr.sin_port = htons(port);
                 inet_pton(servaddr.sin_family,host.data(),&servaddr.sin_addr);
 		bzero(&(servaddr.sin_zero),8);
@@ -105,10 +141,10 @@ namespace Struct{
                 std::cout<<"还未连接";perror("no connect");exit(1);
             }
         }
-        std::future<std::string> data(){
+        std::future<std::vector<char>> data(){
             if(connectd){
                 return std::async(std::launch::async
-                ,[this]()->std::string{
+                ,[this]()->std::vector<char>{
                     char recvbuf[BUFFER_SIZE];
                     socklen_t len = sizeof(struct sockaddr);int lent;
                    // recvfrom(int fd, void *__restrict buf, size_t n, int flags, struct sockaddr *__restrict addr, socklen_t *__restrict addr_len)
@@ -118,9 +154,9 @@ namespace Struct{
                     if(lent<0){
                         perror("recv");
                         exit(1);
-                        return "Error";
+                        
                     }
-                    return recvbuf;
+                    return std::vector<char>(recvbuf,recvbuf+lent);
                 });
             }else{
 		    std::cout<<"还没连接";
@@ -130,3 +166,5 @@ namespace Struct{
         }
     };
 }
+const std::regex Struct::Socket::IPV4R = 
+std::regex("((25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))");

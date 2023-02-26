@@ -1,0 +1,61 @@
+#pragma once
+#include <asm-generic/errno.h>
+#include <chrono>
+#include <exception>
+#include <memory>
+#include <string>
+#include <vector>
+#include "../java/io/DataInput.cpp"
+#include "../struct/Socket.cpp"
+using namespace Struct;
+namespace tools {
+    class TimeOut :public std::exception{
+        const  char * what() const throw(){
+            return "TimeOut!";
+        }
+    };
+    class ServerInfo{
+        public:
+        std::string name,mapName,decs,modeName,versiontype;
+        int players,waves,version,limit;char gamemod;
+        ServerInfo(std::vector<char> data){
+            read(data);
+        }
+        void read(java::io::DataInput data){
+            name=data.Read2String();mapName=data.Read2String();
+            players=data.ReadInt();waves=data.ReadInt();
+            version=data.ReadInt();versiontype=data.Read2String();
+            gamemod=data.ReadValue<char>();
+            limit=data.ReadInt();decs=data.Read2String();
+            modeName=data.Read2String();
+        }
+        void read(std::vector<char> data){
+            java::io::DataInput in;
+            for(auto i:data){
+                in.byteStream.push_back(
+                    static_cast<unsigned char>(i)		
+                );
+            }
+            read(in);
+        }
+        std::string toString(){
+            return name+"\n"+mapName+" mode:"+gamemod+" : "+modeName+"\n players:"
+            +std::to_string(players)+" waves:"+std::to_string(waves)
+            +"\n"+versiontype+" : "+std::to_string(version)+"\n";
+        }
+    };
+    ServerInfo pingHost(int port,std::string host){
+        std::unique_ptr<Socket> c(new Socket(domain::IPV4,type::UDP,0));
+        c->connect(port, host);
+        unsigned char buf[2] = {static_cast<unsigned char>(-2), 1};
+        c->send(buf,2);
+        auto data=c->data();
+        if(data.wait_for(std::chrono::seconds(20))==std::future_status::ready){
+            c->close();
+            return ServerInfo(data.get());
+        }else{
+            c->close();
+            throw TimeOut();
+        }
+    }
+}

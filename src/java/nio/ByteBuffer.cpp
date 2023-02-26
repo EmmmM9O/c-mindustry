@@ -1,40 +1,44 @@
-#include <array>
+#pragma once
+
+#include "../io/DataInput.cpp"
+#include "../io/DataOutput.cpp"
+
 #include <vector>
+
 typedef unsigned char byte;
 namespace java {
     namespace nio {
-        class ByteBuffer{
-            private:
-            std::vector<byte> buf;
-            int capacity,limit,position=0,mark=-1;
-            ByteBuffer(int length){
-                buf=std::vector<byte>(length);
-                limit=length;
-            }
+        class ByteBuffer:virtual public io::DataInput,
+        virtual public io::DataOutput{
+
             public:
-            static auto allocate(int length){
-                return ByteBuffer(length);
+            std::vector<byte> byteStream;
+            ByteBuffer():io::DataOutput(),io::DataInput(){
+
             }
-            static auto  from(std::vector<byte> buffer){
-                auto obj=ByteBuffer(buffer.size());
+            ByteBuffer(int length):io::DataOutput(length),
+            io::DataInput(length){
                 
-                return obj;
             }
-            auto clear(){
-                position=0;limit=buf.size();
-                buf.clear();return this;
+            static auto allocate(int l){
+                return ByteBuffer(l);
             }
-            auto get(int length){
-                auto o=position;
-                position+=length;
-                std::vector<byte> b;
-                for(int i=o;i<position;i++){
-                    b.push_back(buf[i]);
+            static auto from(std::vector<char> buf){
+                auto b=ByteBuffer(buf.size());
+                for(auto i:buf){
+                    b.byteStream.push_back(
+                            static_cast<unsigned char>(i)
+                    );
                 }
                 return b;
             }
-            auto getInt(){
-                
+            auto flip(){
+                streamIter=0;
+                return this;
+            }
+            void clear(){
+                byteStream.clear();
+                streamIter=0;
             }
         };
     }

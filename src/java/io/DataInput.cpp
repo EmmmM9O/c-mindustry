@@ -2,12 +2,17 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <stack>
+#include <netinet/in.h>
 typedef unsigned char byte;
-
 namespace java{
     namespace io{
         class DataInput{
             public:
+            DataInput(int l){
+                streamIter=0;
+                byteStream=std::vector<byte>(l);
+            }
             int streamIter;
             std::vector<byte> byteStream;
 	    DataInput(){
@@ -34,7 +39,8 @@ namespace java{
                 return ReadValue<char>();
             }
             int ReadInt(){
-                return ReadValue<int32_t>();
+                return ntohl(ReadValue<int>());
+               // return ReadValue<int>();
             }
             float ReadFloat(){
                 return ReadValue<float>();

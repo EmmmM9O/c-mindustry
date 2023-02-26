@@ -10,7 +10,9 @@ namespace java{
             DataOutput(){
                 byteStream=std::vector<byte>();
             }
-            
+            DataOutput(int l){
+                byteStream=std::vector<byte>(l);
+            }
             std::vector<byte> byteStream;
             template<typename T>
             void WriteValue(T &val){
