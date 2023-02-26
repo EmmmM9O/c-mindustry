@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 typedef unsigned char byte;
+
 namespace java{
     namespace io{
         class DataOutput{
@@ -9,6 +10,7 @@ namespace java{
             DataOutput(){
                 byteStream=std::vector<byte>();
             }
+            
             std::vector<byte> byteStream;
             template<typename T>
             void WriteValue(T &val){
