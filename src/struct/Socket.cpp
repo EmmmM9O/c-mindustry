@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <chrono>
 #include <cstddef>
 #include <cstdio>
 #include <exception>
@@ -16,9 +17,14 @@
 #include <regex>
 #include "../arc/Events.cpp"
 #include <netdb.h>
-
+#include "../java/nio/ByteBuffer.cpp"
 
 namespace Struct{
+    class TimeOut:public std::exception{
+        const char * what() const throw(){
+            return "TimeOut!";
+        };
+    };
     class HostErr:public std::exception{
         const char * what() const throw(){
             return "Cann't get ip by the host:";
@@ -43,6 +49,16 @@ namespace Struct{
         int id;
         bool connectd=false;
         struct sockaddr_in servaddr;
+        void read (java::nio::ByteBuffer &buf,int time){
+            auto f=data();
+            if(f.wait_for(std::chrono::seconds(time))
+            ==std::future_status::ready){
+                auto b=f.get();
+                buf.put(b);
+            }else{
+                throw new TimeOut();
+            }
+        }
         std::string getIpByHost(std::string str){
             auto a=gethostbyname(str.data());
             if(a==NULL){

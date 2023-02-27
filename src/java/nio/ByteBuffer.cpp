@@ -23,6 +23,13 @@ namespace java {
             static auto allocate(int l){
                 return ByteBuffer(l);
             }
+            void put(std::vector<char> buf){
+                for(auto i:buf){
+                    byteStream.push_back(
+                        static_cast<unsigned char>(i)
+                    );
+                }
+            }
             static auto from(std::vector<char> buf){
                 auto b=ByteBuffer(buf.size());
                 for(auto i:buf){

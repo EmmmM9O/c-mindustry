@@ -1,6 +1,10 @@
-#include "./NetSerializer.cpp"
 #include "../../struct/Socket.cpp"
 #include "../../java/nio/ByteBuffer.cpp"
+#include "./FrameworkMessage.cpp"
+#include <chrono>
+#include <thread>
+#include "./NetSerializer.cpp"
+
 namespace arc {
     namespace net {
         class TcpConnection{
@@ -8,7 +12,12 @@ namespace arc {
             NetSerializer serialization;
             Struct::Socket socket;
             java::nio::ByteBuffer readBuffer, writeBuffer;
+            int timeout;
+            std::thread socketThread;
             public:
+            ~TcpConnection(){
+                close();
+            }
             short currentObjectLength;
             TcpConnection(
                 NetSerializer serialization_, 
@@ -28,21 +37,60 @@ namespace arc {
                 void close(){
                     if(socket.connectd)socket.close();
                 }
-                void connect(int port,std::string ip){
+                void connect(int port,std::string ip,int time){
+                    timeout=time;
                     if(socket.connectd) close();
                     currentObjectLength=0;
                     writeBuffer.clear();
                     readBuffer.clear();
                     readBuffer.flip();
                     socket.connect(port, ip);
+                    socketThread=std::thread([this]()->void{
+                        if(!this->socket.connectd){
+                            return;
+                        }
+                        this->send(
+                            FrameworkMessage::KeepAlive()
+                        );
+                        std::this_thread::sleep_for(std::chrono::seconds(8));
+                    });socketThread.detach();
                 }
                 auto readObject(){
                     if(socket.connectd){
                         if(currentObjectLength==0){
-                            currentObjectLength=readBuffer.ReadShort();
+                            //currentObjectLength=readBuffer.ReadShort();
+                            int lengthLength = serialization.getLengthLength();
+                            currentObjectLength = serialization.readLength(readBuffer);
+                            if(readBuffer.byteStream.size()<lengthLength){
+                                try{
+                                socket.read(readBuffer, timeout);
+                                }catch(Struct::TimeOut &e){           
+                                    throw e;
+                                }
+                            }
                         }
+
                     }
+                    auto b=readBuffer.streamIter;
+                    int length = currentObjectLength;
+                    currentObjectLength = 0;
+                    readBuffer.streamIter=b;
+                    return serialization.read(readBuffer);
                 }
+                template<typename T>
+                int send(T obj){
+                    int lengthLength = serialization.getLengthLength();
+                    int start=writeBuffer.streamIter;
+                    writeBuffer.streamIter+=lengthLength;
+                    serialization.write(writeBuffer,obj);
+                    int end=writeBuffer.streamIter;
+                    writeBuffer.streamIter=start;
+                    serialization.writeLength(writeBuffer, end - lengthLength - start);serialization.writeLength(writeBuffer, end - lengthLength - start);
+                    writeBuffer.streamIter=end;
+                    return end-start;
+
+                }
+
         };
     }
 }
