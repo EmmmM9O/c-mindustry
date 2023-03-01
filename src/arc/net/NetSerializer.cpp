@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../java/nio/ByteBuffer.cpp"
 #include <boost/any.hpp>
 namespace arc {

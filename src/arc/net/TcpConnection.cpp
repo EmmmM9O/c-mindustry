@@ -2,7 +2,6 @@
 #include "../../java/nio/ByteBuffer.cpp"
 #include "./FrameworkMessage.cpp"
 #include <chrono>
-#include <thread>
 #include "./NetSerializer.cpp"
 
 namespace arc {
@@ -13,7 +12,6 @@ namespace arc {
             Struct::Socket socket;
             java::nio::ByteBuffer readBuffer, writeBuffer;
             int timeout;
-            std::thread socketThread;
             public:
             ~TcpConnection(){
                 close();
@@ -45,15 +43,7 @@ namespace arc {
                     readBuffer.clear();
                     readBuffer.flip();
                     socket.connect(port, ip);
-                    socketThread=std::thread([this]()->void{
-                        if(!this->socket.connectd){
-                            return;
-                        }
-                        this->send(
-                            FrameworkMessage::KeepAlive()
-                        );
-                        std::this_thread::sleep_for(std::chrono::seconds(8));
-                    });socketThread.detach();
+                    
                 }
                 auto readObject(){
                     if(socket.connectd){
@@ -87,6 +77,7 @@ namespace arc {
                     writeBuffer.streamIter=start;
                     serialization.writeLength(writeBuffer, end - lengthLength - start);serialization.writeLength(writeBuffer, end - lengthLength - start);
                     writeBuffer.streamIter=end;
+                    socket.send(writeBuffer.byteStream.data(),writeBuffer.byteStream.size());
                     return end-start;
 
                 }

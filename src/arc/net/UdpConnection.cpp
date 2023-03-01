@@ -1,10 +1,10 @@
 #include "../../java/nio/ByteBuffer.cpp"
 #include "./NetSerializer.cpp"
+#include <regex>
 #include <string>
 #include "../../struct/Socket.cpp"
 #include "./FrameworkMessage.cpp"
-#include <thread>
-#include <chrono>
+
 
 using namespace java::nio;
 namespace arc {
@@ -14,19 +14,12 @@ namespace arc {
             Struct::Socket socket;
             ByteBuffer readBuffer, writeBuffer;
             NetSerializer serialization;
-            std::thread socketThread;
             public:
             UdpConnection(NetSerializer serialization_, int bufferSize)
             :socket(Struct::domain::IPV4, Struct::type::UDP, 0){
                 serialization=serialization_;
                 readBuffer = ByteBuffer::allocate(bufferSize);
             writeBuffer = ByteBuffer::allocate(bufferSize);
-            socketThread=std::thread([this]()->void{
-                if(!this->socket.connectd){
-                    return;
-                }
-                std::this_thread::sleep_for(std::chrono::seconds(8));
-            });
             }
             ~UdpConnection(){
                 close();
@@ -41,7 +34,23 @@ namespace arc {
                 writeBuffer.clear();
                 if(!socket.connectd){
                     socket.connect(port,ip);
-                    socketThread.detach();
+                }
+            }
+            auto readObject(){
+                readBuffer.flip();
+                auto o=serialization.read(readBuffer);
+                readBuffer.clear();
+                return o;
+            }
+                
+            template<typename T>
+            void send(T obj){
+                if(socket.connectd){
+                    writeBuffer.clear();
+                    serialization.write(writeBuffer, obj);
+                    writeBuffer.flip();
+                    socket.send(writeBuffer.byteStream.data(),
+                    writeBuffer.byteStream.size());
                 }
             }
         };

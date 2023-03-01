@@ -3,6 +3,7 @@
 #include "../io/DataInput.cpp"
 #include "../io/DataOutput.cpp"
 
+#include <string>
 #include <vector>
 
 typedef unsigned char byte;
@@ -30,6 +31,7 @@ namespace java {
                     );
                 }
             }
+            
             static auto from(std::vector<char> buf){
                 auto b=ByteBuffer(buf.size());
                 for(auto i:buf){
