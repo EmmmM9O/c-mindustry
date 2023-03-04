@@ -1,12 +1,13 @@
 
 #include <iostream>
 #include "./tools/PingHost.cpp"
+#include "./arc/util/io/Log.cpp"
 using namespace tools;
 using namespace std;
-typedef unsigned char byte;
+using namespace arc::util;
 
 int main(){
-	cout<<"ping\n";
+	Log::info("Log Test ${} ${} ",1,"test");
 	cout<<pingHost(10404,"n2.akiracloud.net").toString();
 	
 	cout<<"close\n";

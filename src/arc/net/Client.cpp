@@ -1,6 +1,7 @@
 #include "./Connection.cpp"
 #include "./NetSerializer.cpp"
 #include <bits/types/time_t.h>
+#include <boost/any.hpp>
 #include <chrono>
 #include <set>
 #include <string>
@@ -29,6 +30,7 @@ namespace arc {
                           auto o=tcp.readObject();
                           if(o.empty()) break;
                           if(!tcpRegistered){
+                            /*
                             if(std::is_base_of<
                             FrameworkMessage::RegisterTCP
                             ,typeof o.type()>
@@ -37,17 +39,28 @@ namespace arc {
                                 auto p=FrameworkMessage::RegisterTCP();
                                 sendUDP(p);
                             }
-                          }
-                          if(!udpRegistered){
-                            if(std::is_base_of<FrameworkMessage::RegisterUDP, 
-                            typeof o.type()>::value){
-                                udpRegistered=true;
+                            */
+                            try{
+                                boost::any_cast<FrameworkMessage::RegisterTCP>(o);
+                                tcpRegistered=true;
+                                auto p=FrameworkMessage::RegisterTCP();
+                                sendUDP(p);
+                                break;
+                            }catch(boost::bad_any_cast){
+
                             }
                           }
-                          if(!std::is_base_of<FrameworkMessage::_FrameworkMessage_, 
-                          typeof o.type()>::value){
-                            notifyReceived(o);
+                          if(!udpRegistered){
+                            try{
+                                boost::any_cast<FrameworkMessage::RegisterUDP>(o);
+                                udpRegistered=true;
+                                break;
+                            }catch(boost::bad_any_cast){
+                                
+                            };
                           }
+                          
+                            notifyReceived(o);
                         }catch(Struct::TimeOut &e){
                             break;
                         }
