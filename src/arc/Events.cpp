@@ -6,10 +6,7 @@
 #include <system_error>
 #include <type_traits>
 #include "func/Func.cpp"
-template<typename T>
-concept EventType= requires(T t){
-    t.Class;
-};
+#define EventType typename
 
 template<typename T>
 concept EnumType=std::is_enum<T>();
@@ -26,18 +23,18 @@ namespace arc{
         void on(T t,R func){
             events[std::to_string((int)t)].push_front((void(*)())func);
         }
-        template<EventType T,Func<T> R>
-         void on(T _,R func){
+        template<EventType T,Cons<T> R>
+         void on(R func){
             events[typeid(T).name()].push_front((void(*)(T))func);
         }
         template<EventType T,Runnable R>
-        void run(T _,R func){
+        void run(R func){
             events[typeid(T).name()].push_front((void(*)(T))[&func](T _)->void{
                 func();
             });
         }
         template<typename T>
-        void fire(T _,T packet){
+        void fire(T packet){
             auto list=events[typeid(T).name()];
             for(auto i=list.begin();i!=list.end();i++){
                 try{
@@ -46,10 +43,6 @@ namespace arc{
                     std::cerr<<e.what()<<'\n';
                 }
             }
-        }
-        template<EventType T>
-        void fire(T packet){
-            fire(packet.Class,packet);
         }
         template<EnumType T>
         void fire(T t){

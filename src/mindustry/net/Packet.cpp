@@ -1,8 +1,8 @@
+#pragma once
 #include <boost/any.hpp>
 #include "./NetConnection.cpp"
 #include "../../arc/util/io/Writes.cpp"
 #include "../../arc/util/io/Reads.cpp"
-
 namespace mindustry {
     namespace net {
         class Packet{
@@ -24,3 +24,5 @@ namespace mindustry {
         };
     }
 }
+template <typename T>
+concept is_Packet=std::is_base_of<mindustry::net::Packet,T>::value;

@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include "./tools/PingHost.cpp"
-#include "./arc/util/io/Log.cpp"
+#include "./arc/util/Log.cpp"
 using namespace tools;
 using namespace std;
 using namespace arc::util;

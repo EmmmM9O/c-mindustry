@@ -1,3 +1,5 @@
+#pragma once
+
 #include "./Packet.cpp"
 #include <cstddef>
 #include <string>
