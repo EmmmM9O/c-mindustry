@@ -19,9 +19,13 @@ namespace arc{
         private:
         std::map<std::string,std::forward_list<boost::any>> events;
         public:
+        template<EnumType T,T V>
+        static std::string getHash(){
+            return __PRETTY_FUNCTION__;
+        }
         template<EnumType T,Runnable R>
         void on(T t,R func){
-            events[std::to_string((int)t)].push_front((void(*)())func);
+            events[getHash<T, t>()].push_front((void(*)())func);
         }
         template<EventType T,Cons<T> R>
          void on(R func){
@@ -46,7 +50,7 @@ namespace arc{
         }
         template<EnumType T>
         void fire(T t){
-            auto list=events[std::to_string((int)t)];
+            auto list=events[getHash<T,t>()];
             for(auto i=list.begin();i!=list.end();i++){
                 try{
                     boost::any_cast<void(*)()>(*i)();

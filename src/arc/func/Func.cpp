@@ -12,3 +12,7 @@ template<typename T>
 concept Runnable=requires(T t){
     {t()} -> std::same_as<void>;
 };
+template<typename T,typename T2>
+concept Prov=requires(T t){
+    {t.get()} -> std::same_as<T2>;
+};

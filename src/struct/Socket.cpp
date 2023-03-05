@@ -30,6 +30,21 @@ namespace Struct{
             return "Cann't get ip by the host:";
         }
     };
+    class ConnectEd:public std::exception{
+        const char * what() const throw(){
+            return "Connected";
+        }
+    };
+    class UnConnect:public std::exception{
+        const char * what() const throw(){
+            return "Un Connect";
+        }
+    };
+    class ConnectErr :public std::exception{
+        const char * what() const throw(){
+            return "ConnectErr";
+        }
+    };
     /*
     class TimeOut :public std::exception{
         const char * what() const throw(){
@@ -87,7 +102,7 @@ namespace Struct{
                     exit(1);
                 }
             }else{
-                std::cout<<"还未连接";perror("no connect");exit(1);
+                throw UnConnect();
             }
         }
         void send(std::string str){
@@ -101,9 +116,7 @@ namespace Struct{
                     exit(1);
                 }
             }else{
-                std::cout<<"还未连接";
-                perror("no connect");
-                exit(1);
+                throw UnConnect();             
             }
         }
         void connect(int port,std::string host){
@@ -120,24 +133,18 @@ namespace Struct{
                 inet_pton(servaddr.sin_family,host.data(),&servaddr.sin_addr);
 		bzero(&(servaddr.sin_zero),8);
                 if(::connect(id, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0){
-			std::cout<<"连接中出错";
-                    perror("connect");
-                    exit(1);
+                    throw ConnectErr();
                 }
                 connectd=true;
             }else {
-		    std::cout<<"连接过了";
-                perror("connectd");
-                exit(1);
+                throw ConnectEd();
             }
         }
         void close(){
             if(connectd){
                 ::close(id);
             }else{
-		    std::cout<<"还没连接";
-                perror("no ocnnect");
-                exit(1);
+                throw UnConnect();
             }
         }
         
@@ -154,7 +161,8 @@ namespace Struct{
                     }
                     return std::vector<char>(recvbuf,recvbuf+lent);
             }else{
-                std::cout<<"还未连接";perror("no connect");exit(1);
+               // std::cout<<"还未连接";perror("no connect");exit(1);
+                throw UnConnect();
             }
         }
         std::future<std::vector<char>> data(){
@@ -175,9 +183,7 @@ namespace Struct{
                     return std::vector<char>(recvbuf,recvbuf+lent);
                 });
             }else{
-		    std::cout<<"还没连接";
-                perror("no connect");
-                exit(1);
+                throw UnConnect();
             }
         }
     };

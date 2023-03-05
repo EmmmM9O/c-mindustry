@@ -13,9 +13,18 @@ namespace java {
         virtual public io::DataOutput{
 
             public:
+        
             std::vector<byte> byteStream;
             ByteBuffer():io::DataOutput(),io::DataInput(){
 
+            }
+            int size(){
+                return byteStream.size();
+            }
+            void write(std::vector<unsigned char> v){
+                for(auto i :v){
+                    byteStream.push_back(i);
+                }
             }
             ByteBuffer(int length):io::DataOutput(length),
             io::DataInput(length){
