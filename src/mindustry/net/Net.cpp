@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../arc/func/Func.cpp"
 #include "./Packet.cpp"
 #include "./Packets.cpp"
@@ -6,14 +8,32 @@
 #include <forward_list>
 #include "./Streamable.cpp"
 #include <map>
+#include <math.h>
 #include <type_traits>
+#include "../../arc/util/Log.cpp"
 using namespace mindustry::net::Packets;
+using namespace arc::util;
 template <typename T,typename T1>
 concept IsExtend=std::is_base_of<T1, T>::value;
 namespace mindustry{
     namespace net{
+        class NetProvider{
+            public:
+            template<Runnable Run>
+            void connectClient(std::string ip, int port, Run success);
+            template<typename T>
+            void sendClient(T object,bool reliable);
+            void disconnectClient();
+        };
         class Net{
             public:
+            Net(){
+                
+            }
+            Net(NetProvider provide){
+                provider=provide;
+            }
+            NetProvider provider;
             bool active=false;
             bool server=false;
             bool clientLoaded=true;
@@ -70,12 +90,22 @@ namespace mindustry{
             template<Runnable Run>
             void connect(std::string ip, int port, Run success){
                 try{
-
+                    provider.connectClient(ip, port, success);
                     active=true;
                     server=false;
                 }catch(...){}
             }
+            void disconnect(){
+                if(active&&!server){
+                    Log::info("Disconnecting.");
+                }
+                provider.disconnectClient();
+                server = false;
+                active = false;
+            }
+            
         };
+        
     }
 }
 using namespace mindustry::net;

@@ -119,6 +119,7 @@ namespace Struct{
                 throw UnConnect();             
             }
         }
+        std::string Chost;
         void connect(int port,std::string host){
             if(!connectd){
                 std::smatch s;
@@ -130,6 +131,7 @@ namespace Struct{
                     }
                 }
                 servaddr.sin_port = htons(port);
+                Chost=host;
                 inet_pton(servaddr.sin_family,host.data(),&servaddr.sin_addr);
 		bzero(&(servaddr.sin_zero),8);
                 if(::connect(id, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0){

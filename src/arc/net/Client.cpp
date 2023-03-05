@@ -1,3 +1,4 @@
+#pragma once
 #include "./Connection.cpp"
 #include "./NetSerializer.cpp"
 #include <bits/types/time_t.h>
@@ -10,7 +11,7 @@
 #include <type_traits>
 namespace arc {
     namespace net {
-        class Client:Connection{
+        class Client:public Connection{
             private:
             std::thread thread;
             bool udpRegistered,tcpRegistered;

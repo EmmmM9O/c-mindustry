@@ -13,6 +13,9 @@ namespace arc {
             java::nio::ByteBuffer readBuffer, writeBuffer;
             int timeout;
             public:
+            std::string getIP(){
+                return socket.Chost;
+            }
             ~TcpConnection(){
                 close();
             }

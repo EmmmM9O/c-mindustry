@@ -1,3 +1,5 @@
+#pragma once
+
 #include <type_traits>
 #include <iostream>
 template<typename T,typename T1,typename T3>

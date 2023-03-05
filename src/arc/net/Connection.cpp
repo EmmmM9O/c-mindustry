@@ -11,7 +11,9 @@ namespace arc {
         class Connection;
         class NetListener{
             public:
-            void received(Connection *con,boost::any obj);
+            virtual void received(Connection *con,boost::any obj);
+            virtual void connected(Connection *connection);
+
 
         };
         class Connection{
@@ -19,7 +21,7 @@ namespace arc {
             std::string name;
             TcpConnection tcp;
             UdpConnection udp;
-            std::vector<NetListener> listeners;
+            std::list<NetListener> listeners;
             volatile bool isConnected;
             int id=-1;
             protected:
@@ -30,6 +32,9 @@ namespace arc {
 
             }
             public:
+            std::string getIP(){
+                return tcp.getIP();
+            }
             int getID(){
                 return id;
             }
@@ -54,7 +59,9 @@ namespace arc {
                     i.received(this, obj);
                 }
             }
-            
+            void addListener(NetListener listener){
+                listeners.push_front(listener);
+            }
         };
     }
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <boost/any.hpp>
 #include <cstdio>
 #include <functional>
@@ -23,9 +25,9 @@ int now;
   static std::map<std::string, std::string> datas;
   enum class LogLevel { debug, info, warn, err, none };
   template <OutString... T>
-  static void info(std::string str,T... args){
-    log(LogLevel::info,str,args...);
-  }
+  static void info(std::string str,T... args){log(LogLevel::info,str,args...);}
+  template <OutString... T>
+  static void debug(std::string str,T... args){log(LogLevel::debug,str,args...);}
   template <OutString U>
   static void out(std::string str,std::smatch s,U arg){
     bool flag=false;

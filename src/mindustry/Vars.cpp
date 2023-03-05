@@ -4,7 +4,5 @@
 
 namespace mindustry{
     namespace Vars {
-        mindustry::net::Net net;
-        
     }
 }
