@@ -17,7 +17,7 @@
 using namespace tools;
 using namespace arc::util;
 int main(){
-	Log::info("Ping Host ${} : ${} ","n2.akiracloud.net"
+	Log::info("Ping Host ${} : ${} ${} ","n2.akiracloud.net"
 ,10404,pingHost(10404,"n2.akiracloud.net").toString());
 	return 0;
 }
