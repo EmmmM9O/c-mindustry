@@ -2,7 +2,7 @@
 
 ### 第三方服务器端
 
->[English](https://github.com/EmmmM9O/c-mindustry/README.md)
+>[English](https://github.com/EmmmM9O/c-mindustry/blob/main/README.md)
 
 > 还在制作
 
