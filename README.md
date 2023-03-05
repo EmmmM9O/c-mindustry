@@ -1,6 +1,6 @@
 # C-Mindustry
 ### Third party Server Side
->[中文版](https://github.com/EmmmM9O/c-mindustry/cn-README.md)
+>[中文版](https://github.com/EmmmM9O/c-mindustry/blob/main/cn-README.md)
 > Still in production
 * ### build
    clone and edit `CMakeLists.txt`
