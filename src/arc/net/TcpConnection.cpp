@@ -1,6 +1,7 @@
 #include "../../struct/Socket.cpp"
 #include "../../java/nio/ByteBuffer.cpp"
 #include "./FrameworkMessage.cpp"
+#include <boost/any.hpp>
 #include <chrono>
 #include "./NetSerializer.cpp"
 
@@ -70,8 +71,7 @@ namespace arc {
                     readBuffer.streamIter=b;
                     return serialization.read(readBuffer);
                 }
-                template<typename T>
-                int send(T obj){
+                int send(boost::any obj){
                     int lengthLength = serialization.getLengthLength();
                     int start=writeBuffer.streamIter;
                     writeBuffer.streamIter+=lengthLength;
@@ -82,7 +82,6 @@ namespace arc {
                     writeBuffer.streamIter=end;
                     socket.send(writeBuffer.byteStream.data(),writeBuffer.byteStream.size());
                     return end-start;
-
                 }
 
         };

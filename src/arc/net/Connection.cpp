@@ -41,12 +41,11 @@ namespace arc {
             bool getIsConnected(){
                 return isConnected;
             }
-            template<typename T>
-            void sendTCP(T o){
+            void sendTCP(boost::any o){
                 tcp.send(o);
             }
-            template<typename T>
-            void sendUDP(T o){
+            
+            void sendUDP(boost::any o){
                 udp.send(o);
             }
 

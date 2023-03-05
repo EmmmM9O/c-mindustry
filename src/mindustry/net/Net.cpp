@@ -19,17 +19,13 @@ namespace mindustry{
     namespace net{
         class NetProvider{
             public:
-            template<Runnable Run>
-            void connectClient(std::string ip, int port, Run success);
-            template<typename T>
-            void sendClient(T object,bool reliable);
-            void disconnectClient();
+            virtual void connectClient(std::string ip, int port, void(*success)());
+            virtual void sendClient(boost::any object,bool reliable);
+            virtual void disconnectClient();
         };
         class Net{
             public:
-            Net(){
-                
-            }
+            
             Net(NetProvider provide){
                 provider=provide;
             }
@@ -90,7 +86,7 @@ namespace mindustry{
             template<Runnable Run>
             void connect(std::string ip, int port, Run success){
                 try{
-                    provider.connectClient(ip, port, success);
+                    provider.connectClient(ip, port, (void(*)())success);
                     active=true;
                     server=false;
                 }catch(...){}

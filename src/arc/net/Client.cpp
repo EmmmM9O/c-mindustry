@@ -28,6 +28,7 @@ namespace arc {
                     if(!isConnected) return;
                     while(true){
                         try{
+                    if(!isConnected) return;
                           auto o=tcp.readObject();
                           if(o.empty()) break;
                           if(!tcpRegistered){

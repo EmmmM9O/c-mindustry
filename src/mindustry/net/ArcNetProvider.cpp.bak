@@ -78,6 +78,6 @@ boost::any mindustry::net::PacketSerializer
                 if(id==static_cast<byte>(-2))
                 return readFramework(buffer);
                 else{
-                
+                    
                 }
 }
