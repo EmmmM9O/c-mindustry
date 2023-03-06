@@ -44,6 +44,14 @@ namespace mindustry{
                     exit(1);
                 }
             }
+            static byte getPacketId(boost::any obj){
+                for(auto i:packetProvs){
+                    if(i.second.type().hash_code()==obj.type().hash_code()){
+                        return i.first;
+                    }
+                }
+                return -1;
+            }
             std::map<int,Streamable::StreamBuilder> streams;
             std::map<std::string,boost::any> clientListeners;
             template<typename T,Cons<T> F>

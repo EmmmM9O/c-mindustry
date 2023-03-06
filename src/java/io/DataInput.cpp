@@ -9,6 +9,10 @@ namespace java{
     namespace io{
         class DataInput{
             public:
+            DataInput(std::vector<byte> b){
+                byteStream=b;
+                streamIter=0;
+            }
             DataInput(int l){
                 streamIter=0;
                 byteStream=std::vector<byte>(l);

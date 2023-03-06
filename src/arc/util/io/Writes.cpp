@@ -2,6 +2,7 @@
 #include "../../../java/io/DataOutput.cpp"
 #include <iterator>
 #include <string>
+#include <vector>
 
 namespace arc{
     namespace util{
@@ -10,6 +11,10 @@ namespace arc{
                 public:
                 java::io::DataOutput output;
                 static Writes instance;
+                Writes(std::vector<byte> b){
+                    output=java::io::DataOutput();
+                    output.byteStream=b;
+                }
                 Writes(java::io::DataOutput out){
                     output=out;
                 }

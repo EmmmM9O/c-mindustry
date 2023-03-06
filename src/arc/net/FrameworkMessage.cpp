@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <boost/any.hpp>
+#include <map>
 namespace arc {
     namespace net {
         namespace FrameworkMessage{
@@ -18,6 +21,24 @@ namespace arc {
                 public:
                 int connectionID;
             };
+            std::vector<size_t> maps;
+            void init(){
+                maps.push_back(typeid(_FrameworkMessage_).hash_code());
+                maps.push_back(typeid(RegisterUDP).hash_code());
+                maps.push_back(typeid(RegisterTCP).hash_code());
+                maps.push_back(typeid(KeepAlive).hash_code());
+
+            }
+            bool isExtend(boost::any object){
+                if(maps.empty()) init();
+                auto t=object.type().hash_code();
+                for(auto i:maps){
+                    if(t==i){
+                        return true;
+                    }
+                }
+                return false;
+            }
         };
     }
 }
