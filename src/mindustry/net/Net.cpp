@@ -58,6 +58,10 @@ namespace mindustry{
             void handleClient(F listener){
                 clientListeners[typeid(T).name()]=(void(*)(T))listener;
             }
+            template<is_Packet T,Prov<T> cons>
+            static void registerPacket(cons func,int id){
+                packetProvs[id]=(T(*)())func;
+            }
             template<is_Packet T>
             void handleClientReceived(T object){
                 object.handled();

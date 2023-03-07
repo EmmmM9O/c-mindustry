@@ -21,6 +21,15 @@ namespace arc {
                 public:
                 int connectionID;
             };
+            class DiscoverHost:public _FrameworkMessage_{
+
+            };
+            class Ping:public _FrameworkMessage_{
+                public:
+                int id;
+                bool isReply;
+            };
+            DiscoverHost discoverHost;
             std::vector<size_t> maps;
             void init(){
                 maps.push_back(typeid(_FrameworkMessage_).hash_code());

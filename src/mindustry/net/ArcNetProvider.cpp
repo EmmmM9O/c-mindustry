@@ -104,6 +104,7 @@ boost::any mindustry::net::PacketSerializer
         }else{
             int read=buffer.remaining();
             //LE wait
+            throw "No Le4";
             temp.position(0);temp.limit(length);
             auto r=Reads(DataInput(buffer.byteStream));
             packet.read(r,length);
@@ -142,6 +143,55 @@ void mindustry::net::PacketSerializer
     }else{
         byteBuffer.put((byte)1);
         //LE4
+        throw "No LE4";
     }
     }
+}
+void mindustry::net::PacketSerializer::writeFramework
+(ByteBuffer &buffer, boost::any obj){
+    if(obj.type().hash_code()==typeid(FrameworkMessage::Ping).hash_code()){
+        auto p=boost::any_cast<FrameworkMessage::Ping>(obj);
+        buffer.put((byte)0);
+        buffer.WriteInt(p.id);
+        buffer.put(p.isReply ? (byte)1 : (byte)0);
+    }
+    else if(obj.type().hash_code()
+    ==typeid(FrameworkMessage::DiscoverHost).hash_code()){
+        buffer.put((byte)1);
+    }else if(obj.type().hash_code()==
+    typeid(FrameworkMessage::KeepAlive).hash_code()){
+        buffer.put((byte)2);
+    }else if(obj.type().hash_code()==
+    typeid(FrameworkMessage::RegisterUDP).hash_code()){
+        auto p=boost::any_cast<FrameworkMessage::RegisterUDP>(obj);
+        buffer.put((byte)3);
+        buffer.WriteInt(p.connectionID);
+    }else if(obj.type().hash_code()==
+    typeid(FrameworkMessage::RegisterTCP).hash_code()){
+        auto p=boost::any_cast<FrameworkMessage::RegisterTCP>(obj);
+        buffer.put((byte)4);
+        buffer.WriteInt(p.connectionID);
+    }
+}
+FrameworkMessage::_FrameworkMessage_ mindustry::net::PacketSerializer::readFramework(java::nio::ByteBuffer &buffer){
+    byte id=buffer.ReadByte();
+    if(id==0){
+        FrameworkMessage::Ping p;
+        p.id=buffer.ReadInt();
+        p.isReply = (int)buffer.ReadByte() == 1;
+        return p;
+    }if(id==1){
+        return FrameworkMessage::discoverHost;
+    }if(id==2){
+        return FrameworkMessage::keepAlive;
+    }if(id==3){
+        FrameworkMessage::RegisterUDP p;
+        p.connectionID=buffer.ReadInt();
+        return p;
+    }if(id==4){
+        FrameworkMessage::RegisterTCP p;
+        p.connectionID=buffer.ReadInt();
+        return p;
+    }
+    throw "Unknown framework message!";
 }

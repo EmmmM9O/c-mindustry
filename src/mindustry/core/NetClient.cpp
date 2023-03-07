@@ -2,6 +2,7 @@
 #include "../../arc/util/Log.cpp"
 #include "../Vars.cpp"
 #include "../net/Packets.cpp"
+#include "../net/ArcNetProvider.cpp"
 using namespace mindustry::Vars;
 using namespace mindustry::net::Packets;
 using namespace arc::util;

@@ -1,4 +1,6 @@
 #pragma once
+#include <climits>
+#include <netinet/in.h>
 #include <string>
 #include <vector>
 typedef unsigned char byte;
@@ -24,13 +26,15 @@ namespace java{
                 WriteValue(val);
             }
             void WriteInt(int val){
-                WriteValue(val);
+                auto i=htonl(val);
+                WriteValue(i);
             }
             void WriteByte(byte b){
                 WriteValue(b);
             }
             void WriteShort(short s){
-                WriteValue(s);
+                auto i=htons(s);
+                WriteValue(i);
             }
             void Write(byte s[]){
                 WriteValue(s);

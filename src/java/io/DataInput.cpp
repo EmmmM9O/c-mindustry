@@ -46,18 +46,18 @@ namespace java{
                 return ntohl(ReadValue<int>());
                // return ReadValue<int>();
             }
-            float ReadFloat(){
+            float ReadFloat(){          
                 return ReadValue<float>();
             }
             long ReadLong(){
-                return ReadValue<long>();
+                return ntohl(ReadValue<long>());
             }
             byte ReadByte(){
                 return ReadValue<byte>();
             }
 
             short ReadShort(){
-                return ReadValue<short>();
+                return ntohs(ReadValue<short>());
             }
             void readFully(std::vector<byte> &d){
                 while(streamIter<byteStream.size()){

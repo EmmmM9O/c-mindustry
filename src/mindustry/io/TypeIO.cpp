@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../arc/util/io/Writes.cpp"
 #include "../../arc/util/io/Reads.cpp"
 #include <cstddef>

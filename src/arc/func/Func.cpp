@@ -16,5 +16,5 @@ concept Runnable=requires(T t){
 };
 template<typename T,typename T2>
 concept Prov=requires(T t){
-    {t.get()} -> std::same_as<T2>;
+    {t()} -> std::same_as<T2>;
 };
