@@ -7,8 +7,12 @@ namespace arc{
     namespace assets{
         class Loadable{
             public:
-            virtual void loadAsync();
-            virtual void loadSync();
+            virtual void loadAsync(){
+                
+            }
+            virtual void loadSync(){
+
+            }
             virtual std::string getName(){
                 return typeid(typeof this).name();
             }

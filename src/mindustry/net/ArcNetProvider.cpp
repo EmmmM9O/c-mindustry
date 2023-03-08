@@ -70,13 +70,13 @@ ArcNetProvider():client(8192,8192,PacketSerializer()){
 }
 void mindustry::net::_NetListener_::connected(Connection *connection){
     Connect c;c.addressTCP=connection->getIP();
-    Vars::net.handleClientReceived(c);
+    Vars::net.handleClientReceived(c,c);
 }
 void mindustry::net::_NetListener_
 ::received(Connection *con, boost::any obj){
     try{
         auto p=boost::any_cast<Packet>(obj);
-        Vars::net.handleClientReceived(p);
+        Vars::net.handleClientReceived(p,obj);
     }catch(...){}
 }
 boost::any mindustry::net::PacketSerializer

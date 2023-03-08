@@ -28,6 +28,9 @@ int now;
   static void info(std::string str,T... args){log(LogLevel::info,str,args...);}
   template <OutString... T>
   static void debug(std::string str,T... args){log(LogLevel::debug,str,args...);}
+  static void out(std::string str,std::smatch s){
+    std::cout<<str<<std::endl;
+  }
   template <OutString U>
   static void out(std::string str,std::smatch s,U arg){
     bool flag=false;

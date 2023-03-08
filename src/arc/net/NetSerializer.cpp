@@ -6,8 +6,12 @@ namespace arc {
     namespace net {
         class NetSerializer{
             public:
-            virtual void write(java::nio::ByteBuffer &buffer, boost::any);
-            virtual boost::any read(java::nio::ByteBuffer &buffer);
+            virtual void write(java::nio::ByteBuffer &buffer, boost::any){
+
+            }
+            virtual boost::any read(java::nio::ByteBuffer &buffer){
+                return nullptr;
+            }
             virtual int getLengthLength(){
                 return 2;
             }

@@ -13,7 +13,7 @@
 namespace mindustry{
     namespace net{
         namespace Packets{
-            class _KickReason_:java::Object{
+            class _KickReason_:public java::Object{
                 public:
                 bool quiet;
                 std::string name;
@@ -37,24 +37,24 @@ namespace mindustry{
             enum class AdminAction{
                 kick, ban, trace, wave
             };
-            class Connect:mindustry::net::Packet{
+            class Connect:public mindustry::net::Packet{
                 public: 
                 std::string addressTCP;
                 virtual int getPriority() override{
                     return priorityHigh;
                 }
             };
-            class Disconnect:mindustry::net::Packet{
+            class Disconnect:public mindustry::net::Packet{
                 public:
                 std::string reason;
                 virtual int getPriority() override{
                     return priorityHigh;
                 }
             };
-            class WorldStream:mindustry::net::Packet{
+            class WorldStream:public mindustry::net::Packet{
 
             };
-            class StreamBegin:mindustry::net::Packet{
+            class StreamBegin:public mindustry::net::Packet{
                 private:
                 static int lastid;
                 public:
@@ -75,7 +75,7 @@ namespace mindustry{
                     id=lastid++;
                 }
             };
-            class StreamChunk :mindustry::net::Packet{
+            class StreamChunk :public mindustry::net::Packet{
                 public:
                 int id;
                 std::vector<byte> data;
@@ -89,7 +89,7 @@ namespace mindustry{
                     data=reads.b(reads.s());
                 }
             };
-            class ConnectPacket:mindustry::net::Packet{
+            class ConnectPacket:public mindustry::net::Packet{
                 public:
                 int version;
                 std::string versionType;

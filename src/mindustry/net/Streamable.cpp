@@ -20,6 +20,9 @@ namespace mindustry{
                 unsigned char type;
                 int total;
                 ByteBuffer stream;
+                StreamBuilder(){
+                    
+                }
                 StreamBuilder(::mindustry::net::Packets::StreamBegin const &b){
                     id=b.id;type=b.type;total=b.total;
                 }

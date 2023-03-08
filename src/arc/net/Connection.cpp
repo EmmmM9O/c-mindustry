@@ -11,8 +11,12 @@ namespace arc {
         class Connection;
         class NetListener{
             public:
-            virtual void received(Connection *con,boost::any obj);
-            virtual void connected(Connection *connection);
+            virtual void received(Connection *con,boost::any obj){
+                
+            }
+            virtual void connected(Connection *connection){
+
+            }
 
 
         };

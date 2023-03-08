@@ -6,10 +6,8 @@ namespace mindustry{
     namespace gen{
         namespace Call{
             void registerPackets(){
-                net::Net::registerPacket<SendMessageCallPacket2>
-                ([]()->SendMessageCallPacket2{
-                    return SendMessageCallPacket2();
-                }, 71);
+                net::Net::registerPacket<SendMessageCallPacket2>(71);
+                
             }
         }
     }

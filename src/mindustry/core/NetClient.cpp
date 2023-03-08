@@ -11,12 +11,15 @@ namespace mindustry{
         class NetClient:public arc::ApplicationListener{
             public:
             NetClient(){
-                ::net.handleClient<::Connect>
+                Vars::net.handleClient<::Connect>
                 ([](auto packet)->void{
                     Log::info("Connecting to server: ${}", packet.addressTCP);
                 });
                 
             }
         };
+    }
+    namespace Vars{
+        core::NetClient netClient;
     }
 }

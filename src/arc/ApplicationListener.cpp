@@ -8,3 +8,15 @@ namespace arc{
         resize(int w,int h),resume();
     };
 }
+using namespace arc;
+void ApplicationListener::dispose(){}
+void ApplicationListener::init(){}
+void ApplicationListener::exit(){}
+void ApplicationListener::fileDropped(files::Fi fi){}
+void ApplicationListener::pause(){}
+void ApplicationListener::update(){}
+void ApplicationListener::resume(){}
+void ApplicationListener::resize(int w, int h){}
+
+
+

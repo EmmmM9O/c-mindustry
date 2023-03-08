@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <forward_list>
 #include "./Streamable.cpp"
+#include <future>
 #include <map>
 #include <math.h>
 #include <type_traits>
@@ -19,9 +20,9 @@ namespace mindustry{
     namespace net{
         class NetProvider{
             public:
-            virtual void connectClient(std::string ip, int port, void(*success)());
-            virtual void sendClient(boost::any object,bool reliable);
-            virtual void disconnectClient();
+            virtual void connectClient(std::string ip, int port, void(*success)()){}
+            virtual void sendClient(boost::any object,bool reliable){}
+            virtual void disconnectClient(){}
         };
         class Net{
             public:
@@ -58,39 +59,47 @@ namespace mindustry{
             void handleClient(F listener){
                 clientListeners[typeid(T).name()]=(void(*)(T))listener;
             }
+            template<is_Packet T>
+            static void registerPacket(int id){
+                packetProvs[id]=(T(*)())[]()->T{return T();};
+            }
             template<is_Packet T,Prov<T> cons>
             static void registerPacket(cons func,int id){
                 packetProvs[id]=(T(*)())func;
             }
             template<is_Packet T>
-            void handleClientReceived(T object){
-                object.handled();
-                if(std::is_base_of<::StreamBegin,T>::value){
-                    auto c=(::StreamBegin)object;
+            void handleClientReceived(T pac,boost::any obj){
+                pac.handled();
+                if(obj.type()==typeid(StreamBegin)){
+                    auto c=boost::any_cast<StreamBegin>(obj);
                     streams[c.id]=Streamable::StreamBuilder(c);
-                }else if(std::is_base_of<::StreamChunk,T>::value){
-                    auto c=(::StreamChunk)object;
+                }else if(obj.type()==typeid(StreamChunk)){
+
+                    auto c=boost::any_cast<StreamChunk>(obj);
                     if(streams.count(c.id)<=0) return;
                     auto builder=streams[c.id];
                     builder.add(c.data);
                     if(builder.isDone()){
                         streams.erase(builder.id);
-                        handleClientReceived(builder.build());
+                        auto e=builder.build();
+                        handleClientReceived(e,e);
                     }
                 }else{
-                    int p = object.getPriority();
+                    int p = pac.getPriority();
                     if(clientLoaded||p==Packet::priorityHigh){
-                        auto key=typeid(T).name();
+                        auto key=obj.type().name();
                         if(clientListeners.count(key)>0){
                             auto t= clientListeners[key];
                             try{
-                                boost::any_cast<void(*)(T)>(t)(object);
+                                boost::any_cast<void(*)(T)>(t)(
+                                    pac
+                                );
                             }catch(boost::bad_any_cast &e){
                                 perror(e.what());
                                 exit(1);
                             }
                         }else{
-                            object.handleClient();
+                            pac.handleClient();
                         }
                     }
                 }
