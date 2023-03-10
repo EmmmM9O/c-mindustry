@@ -72,7 +72,7 @@ void mindustry::net::_NetListener_
 boost::any mindustry::net::PacketSerializer
 ::read(java::nio::ByteBuffer buffer){
                 if(debug){
-                    Log::debug(buffer._str());
+                    Log::debug(buffer._str()
                 }
                 byte id=buffer.ReadByte();
                 if(id==static_cast<byte>(-2))

@@ -65,11 +65,20 @@ namespace Struct{
         bool connectd=false;
         struct sockaddr_in servaddr;
         void read (java::nio::ByteBuffer &buf,int time){
-            auto f=data();
+            auto f=std::async(
+                std::launch::async,
+                [this]()->auto{
+                    return dataSync();
+                }
+            );
             if(f.wait_for(std::chrono::seconds(time))
             ==std::future_status::ready){
                 auto b=f.get();
                 buf.put(b);
+                std::cout<<"Socket get A String";
+                for(auto i :b){
+                    std::cout<<(int)(byte)i<<" ";
+                }
             }else{
                 throw new TimeOut();
             }

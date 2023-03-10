@@ -13,9 +13,9 @@ namespace arc {
             private:
             Struct::Socket socket;
             ByteBuffer readBuffer, writeBuffer;
-            NetSerializer serialization;
+            NetSerializer *serialization;
             public:
-            UdpConnection(NetSerializer serialization_, int bufferSize)
+            UdpConnection(NetSerializer*serialization_, int bufferSize)
             :socket(Struct::domain::IPV4, Struct::type::UDP, 0){
                 serialization=serialization_;
                 readBuffer = ByteBuffer::allocate(bufferSize);
@@ -38,7 +38,7 @@ namespace arc {
             }
             auto readObject(){
                 readBuffer.flip();
-                auto o=serialization.read(readBuffer);
+                auto o=serialization->read(readBuffer);
                 readBuffer.clear();
                 return o;
             }
@@ -47,7 +47,7 @@ namespace arc {
             void send(T obj){
                 if(socket.connectd){
                     writeBuffer.clear();
-                    serialization.write(writeBuffer, obj);
+                    serialization->write(writeBuffer, obj);
                     writeBuffer.flip();
                     socket.send(writeBuffer.byteStream.data(),
                     writeBuffer.byteStream.size());

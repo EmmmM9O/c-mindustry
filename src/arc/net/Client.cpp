@@ -9,22 +9,29 @@
 #include <thread>
 #include <time.h>
 #include <type_traits>
+#include <iostream>
 namespace arc {
     namespace net {
         class Client:public Connection{
             private:
             std::thread thread;
             bool udpRegistered,tcpRegistered;
-            NetSerializer serialization;
+            NetSerializer* serialization;
             public:
+	    bool debug=true;
             time_t time;
             Client(int writeBufferSize,
              int objectBufferSize,
-              NetSerializer serialization_)
+              NetSerializer *serialization_)
               :Connection(serialization_,writeBufferSize
               ,objectBufferSize){
                 serialization=serialization_;
-                thread=std::thread([this]()->void{
+		
+               }
+            void connect(int port,std::string host,int time){
+                tcp.connect(port, host, time);
+                udp.connect(port, host);
+	thread=std::thread([this]()->void{
                     if(!isConnected) return;
                     while(true){
                         try{
@@ -32,16 +39,6 @@ namespace arc {
                           auto o=tcp.readObject();
                           if(o.empty()) break;
                           if(!tcpRegistered){
-                            /*
-                            if(std::is_base_of<
-                            FrameworkMessage::RegisterTCP
-                            ,typeof o.type()>
-                            ::value){
-                                tcpRegistered=true;
-                                auto p=FrameworkMessage::RegisterTCP();
-                                sendUDP(p);
-                            }
-                            */
                             try{
                                 boost::any_cast<FrameworkMessage::RegisterTCP>(o);
                                 tcpRegistered=true;
@@ -64,15 +61,13 @@ namespace arc {
                           
                             notifyReceived(o);
                         }catch(Struct::TimeOut &e){
+
                             break;
                         }
                     }
                     keepAlive();
                 });
-            }
-            void connect(int port,std::string host,int time){
-                tcp.connect(port, host, time);
-                udp.connect(port, host);
+
                 thread.detach();
                 isConnected=true;
             }

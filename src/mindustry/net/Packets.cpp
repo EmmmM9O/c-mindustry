@@ -120,3 +120,4 @@ namespace mindustry{
         }
     }
 }
+int mindustry::net::Packets::StreamBegin::lastid=0;

@@ -4,6 +4,7 @@
 #include "./Packet.cpp"
 #include "./Packets.cpp"
 #include <boost/any.hpp>
+#include <cstddef>
 #include <cstdio>
 #include <forward_list>
 #include "./Streamable.cpp"
@@ -11,6 +12,7 @@
 #include <map>
 #include <math.h>
 #include <type_traits>
+#include <iostream>
 #include "../../arc/util/Log.cpp"
 using namespace mindustry::net::Packets;
 using namespace arc::util;
@@ -20,27 +22,33 @@ namespace mindustry{
     namespace net{
         class NetProvider{
             public:
-            virtual void connectClient(std::string ip, int port, void(*success)()){}
+            virtual void connectClient(std::string ip, int port, void(*success)())=0;
             virtual void sendClient(boost::any object,bool reliable){}
             virtual void disconnectClient(){}
         };
         class Net{
             public:
-            
-            Net(NetProvider provide){
-                provider=provide;
+            Net(NetProvider &provide){
+                provider=&provide;
             }
-            NetProvider provider;
+            NetProvider *provider;
             bool active=false;
             bool server=false;
             bool clientLoaded=true;
+            static std::map<unsigned char,Packet*(*)()> packetProvs2;
             static std::map<unsigned char, boost::any> packetProvs;
             template<IsExtend<Packet> T>
             static T newPacket(unsigned char id){
-                auto t=packetProvs[id & 0xff];
+                auto key=id&0xff;
+                if(packetProvs.count(key)<=0){
+                    std::cout<<"UnknowKey"<<key;
+                    throw "Unknow Key";
+                }
+                auto t=packetProvs[key];
                 try{
                     return boost::any_cast<T(*)()>(t)();
                 }catch(boost::bad_any_cast &e){
+                    std::cout<<"Error from Net::newPacket";
                     perror(e.what());
                     exit(1);
                 }
@@ -62,10 +70,14 @@ namespace mindustry{
             template<is_Packet T>
             static void registerPacket(int id){
                 packetProvs[id]=(T(*)())[]()->T{return T();};
+                packetProvs2[id]=(Packet*(*)())[]()->Packet*{return new T;};
             }
-            template<is_Packet T,Prov<T> cons>
-            static void registerPacket(cons func,int id){
-                packetProvs[id]=(T(*)())func;
+            static Packet *newPacketI(unsigned char id){
+                auto key=id&0xff;
+                if(packetProvs2.count(key)<0){
+                    throw "Error No Packet";
+                }
+                return packetProvs2[key]();
             }
             template<is_Packet T>
             void handleClientReceived(T pac,boost::any obj){
@@ -107,16 +119,19 @@ namespace mindustry{
             template<Runnable Run>
             void connect(std::string ip, int port, Run success){
                 try{
-                    provider.connectClient(ip, port, (void(*)())success);
+			
+                    provider->connectClient(ip, port, (void(*)())success);
                     active=true;
                     server=false;
-                }catch(...){}
+                }catch(...){
+			Log::info("错误!");
+		}
             }
             void disconnect(){
                 if(active&&!server){
                     Log::info("Disconnecting.");
                 }
-                provider.disconnectClient();
+                provider->disconnectClient();
                 server = false;
                 active = false;
             }
@@ -127,6 +142,7 @@ namespace mindustry{
 }
 using namespace mindustry::net;
 std::map<unsigned char, boost::any> Net::packetProvs;
+std::map<unsigned char, Packet*(*)()> Net::packetProvs2;
 Streamable::_Streamable_
  Streamable::StreamBuilder::build(){
     auto s=

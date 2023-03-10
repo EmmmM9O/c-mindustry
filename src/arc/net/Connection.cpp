@@ -21,15 +21,14 @@ namespace arc {
 
         };
         class Connection{
-            protected:
+            public:
             std::string name;
             TcpConnection tcp;
             UdpConnection udp;
-            std::list<NetListener> listeners;
+            std::list<NetListener*> listeners;
             volatile bool isConnected;
             int id=-1;
-            protected:
-            Connection(NetSerializer serialization, int writeBufferSize, int objectBufferSize)
+            Connection(NetSerializer* serialization, int writeBufferSize, int objectBufferSize)
             :tcp(serialization,writeBufferSize,objectBufferSize),
             udp(serialization,writeBufferSize)
             {
@@ -59,10 +58,10 @@ namespace arc {
             }
             void notifyReceived(boost::any obj){
                 for(auto i:listeners){
-                    i.received(this, obj);
+                    i->received(this, obj);
                 }
             }
-            void addListener(NetListener listener){
+            void addListener(NetListener*listener){
                 listeners.push_front(listener);
             }
         };

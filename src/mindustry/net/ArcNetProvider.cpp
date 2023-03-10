@@ -10,6 +10,7 @@
 
 #include "../Vars.cpp"
 #include <boost/any.hpp>
+#include <cstddef>
 #include <exception>
 #include <unistd.h>
 #include "./Packets.cpp"
@@ -40,17 +41,19 @@ namespace mindustry{
         
         class ArcNetProvider:public NetProvider{
             public:
+		    bool debug = true;
             Client client;
             ArcNetProvider();
-            virtual void connectClient(std::string ip, int port, void (*success)()) override{
+            void connectClient(std::string ip, int port, void (*success)()) override{
+		    if(debug) Log::debug("Connect!");
                 client.close();
                 client.connect(port, ip, 5);
                 success();
             }
-            virtual void disconnectClient() override{
+            void disconnectClient() override{
                 client.close();
             }
-            virtual void sendClient(boost::any object, bool reliable) override{
+            void sendClient(boost::any object, bool reliable) override{
                 if(reliable){
                     client.sendTCP(object);
                 }else{
@@ -60,13 +63,16 @@ namespace mindustry{
         };
     }
     namespace Vars{
-        mindustry::net::Net net=mindustry::net::Net(ArcNetProvider());
+        PacketSerializer _pcs=PacketSerializer();
+        _NetListener_ _lis=_NetListener_();
+	    ArcNetProvider _pro=ArcNetProvider();
+        mindustry::net::Net net=mindustry::net::Net(_pro);
     }
 }
 mindustry::net::ArcNetProvider::
-ArcNetProvider():client(8192,8192,PacketSerializer()){
+ArcNetProvider():client(8192,8192,&Vars::_pcs){
     ArcNet::errorHandler=[](std::exception err)->void{Log::debug(err.what());};
-    client.addListener(_NetListener_());
+    client.addListener(&Vars::_lis);
 }
 void mindustry::net::_NetListener_::connected(Connection *connection){
     Connect c;c.addressTCP=connection->getIP();
@@ -81,14 +87,18 @@ void mindustry::net::_NetListener_
 }
 boost::any mindustry::net::PacketSerializer
 ::read(java::nio::ByteBuffer &buffer){
-    if(debug){
-        Log::debug(buffer._str());
-    }
+    try{
     byte id=buffer.ReadByte();
     if(id==static_cast<byte>(-2))
     return readFramework(buffer);
     else{
-        auto packet=Net::newPacket<Packet>(id);
+        auto packet=Net::newPacketI(id);
+        if(packet==nullptr){
+            Log::debug("空指针");
+            return nullptr;
+        }
+        Log::debug("New Packet ${} size: ${} postion:${}",(int)id
+			,buffer.byteStream.size(),buffer.position());
         int length=buffer.ReadShort()&0xffff;
         byte compression=buffer.ReadByte();
         temp.clear();
@@ -98,25 +108,31 @@ boost::any mindustry::net::PacketSerializer
             temp.put(buffer.byteStream);
             temp.position(0);
             auto r=Reads(DataInput(buffer.byteStream));
-            packet.read(r,length);
+            packet->read(r,length);
+            
             temp.byteStream=r.input.byteStream;
             buffer.position(buffer.position()+temp.position());
         }else{
+            //Log::debug("Packet Test");
             int read=buffer.remaining();
             //LE wait
+            Log::debug("No Le4");
             throw "No Le4";
             temp.position(0);temp.limit(length);
             auto r=Reads(DataInput(buffer.byteStream));
-            packet.read(r,length);
+            packet->read(r,length);
             buffer.position(read+buffer.position());
-            
         }
         return packet;
+    }}catch(char* &e){
+        Log::debug("${}",e);
+        return nullptr;
     }
 }
 
 void mindustry::net::PacketSerializer
 ::write(ByteBuffer &byteBuffer, boost::any object){
+    try{
     if(debug){
         int lastPos = byteBuffer.position();
     }
@@ -145,6 +161,8 @@ void mindustry::net::PacketSerializer
         //LE4
         throw "No LE4";
     }
+    }}catch(boost::bad_any_cast &e){
+        std::cout<<"Bug from PacketSerializer "<<e.what();
     }
 }
 void mindustry::net::PacketSerializer::writeFramework

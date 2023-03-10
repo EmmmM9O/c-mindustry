@@ -1,5 +1,6 @@
 
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <thread>
 #include "mindustry/core/NetClient.cpp"
@@ -22,7 +23,7 @@ int main(){
 		[](SendMessageCallPacket2 p)->void{
 			Log::info("Get A Message!\n${}",p.message);
 		});
-	getchar();
+	Log::info("Wait");getchar();
 	Vars::net.disconnect();
 	Log::info("Close!");
 	return 0;

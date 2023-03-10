@@ -1,5 +1,6 @@
 #pragma once
 #include <boost/any.hpp>
+#include <iostream>
 #include "./NetConnection.cpp"
 #include "../../arc/util/io/Writes.cpp"
 #include "../../arc/util/io/Reads.cpp"
@@ -11,7 +12,7 @@ namespace mindustry {
             static const int priorityHigh=2;
             static const int priorityNormal=1;
             virtual void read(arc::util::io::Reads &read){
-
+                std::cout<<"Read!";
             }
             virtual void write(arc::util::io::Writes &write){
 
@@ -29,7 +30,8 @@ namespace mindustry {
             virtual void handleClient(){
                 
             }
-            virtual void handleServer(mindustry::net::NetConnection con);
+            virtual void handleServer(mindustry::net::NetConnection con){
+	    }
         };
     }
 }
