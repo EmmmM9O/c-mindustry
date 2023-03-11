@@ -1,85 +1,54 @@
 #pragma once
 
-#include "../io/DataInput.cpp"
-#include "../io/DataOutput.cpp"
+#include "./ByteBuffer.hpp"
 
-#include <string>
-#include <sys/syscall.h>
-#include <vector>
+int java::nio::ByteBuffer::remaining() {
+  return byteStream.max_size() - streamIter;
+}
 
-typedef unsigned char byte;
-namespace java {
-    namespace nio {
-        class ByteBuffer:virtual public io::DataInput,
-        virtual public io::DataOutput{
+java::nio::ByteBuffer::ByteBuffer() : io::DataOutput(), io::DataInput() {}
+int java::nio::ByteBuffer::size() { return byteStream.size(); }
+void java::nio::ByteBuffer::write(std::vector<unsigned char> v) {
+  for (auto i : v) {
+    byteStream.push_back(i);
+  }
+}
+java::nio::ByteBuffer::ByteBuffer(int length)
+    : io::DataOutput(length), io::DataInput(length) {}
+java::nio::ByteBuffer java::nio::ByteBuffer::allocate(int l) {
+  return ByteBuffer(l);
+}
+void java::nio::ByteBuffer::put(std::vector<char> buf) {
+  for (auto i : buf) {
+    byteStream.push_back(static_cast<unsigned char>(i));
+  }
+}
+void java::nio::ByteBuffer::put(ByteBuffer byte) { put(byte.byteStream); }
+void java::nio::ByteBuffer::put(std::vector<byte> buf) {
+  for (auto i : buf) {
+    byteStream.push_back(i);
+  }
+}
 
-            public:
-            int remaining(){
-                return byteStream.max_size()-streamIter;
-            }
-            std::vector<byte> byteStream;
-            ByteBuffer():io::DataOutput(),io::DataInput(){
-
-            }
-            int size(){
-                return byteStream.size();
-            }
-            void write(std::vector<unsigned char> v){
-                for(auto i :v){
-                    byteStream.push_back(i);
-                }
-            }
-            ByteBuffer(int length):io::DataOutput(length),
-            io::DataInput(length){
-                
-            }
-            static auto allocate(int l){
-                return ByteBuffer(l);
-            }
-            void put(std::vector<char> buf){
-                for(auto i:buf){
-                    byteStream.push_back(
-                        static_cast<unsigned char>(i)
-                    );
-                }
-            }
-            void put(ByteBuffer byte){
-                put(byte.byteStream);
-            }
-            void put(std::vector<byte> buf){
-                for(auto i:buf){
-                    byteStream.push_back(i);
-                }
-            }
-            
-            static auto from(std::vector<char> buf){
-                auto b=ByteBuffer(buf.size());
-                for(auto i:buf){
-                    b.byteStream.push_back(
-                            static_cast<unsigned char>(i)
-                    );
-                }
-                return b;
-            }
-            auto flip(){
-                streamIter=0;
-                return this;
-            }
-            void clear(){
-                byteStream.clear();
-                streamIter=0;
-            }
-            int position(){
-                return streamIter;
-            }
-            void position(int p){
-                streamIter=p;
-            }
-            void limit(int length){
-                if(length>byteStream.max_size()){
-                    byteStream.resize(length);
-                }
-            }
-        };
-    }
+java::nio::ByteBuffer java::nio::ByteBuffer::from(std::vector<char> buf) {
+  auto b = ByteBuffer(buf.size());
+  for (auto i : buf) {
+    b.byteStream.push_back(static_cast<unsigned char>(i));
+  }
+  return b;
+}
+java::nio::ByteBuffer java::nio::ByteBuffer::flip() {
+  streamIter = 0;
+  return *this;
+}
+void java::nio::ByteBuffer::clear() {
+  byteStream.clear();
+  streamIter = 0;
+}
+int java::nio::ByteBuffer::position() { return streamIter; }
+void java::nio::ByteBuffer::position(int p) { streamIter = p; }
+void java::nio::ByteBuffer::limit(int length) {
+  if (length > byteStream.max_size()) {
+    byteStream.resize(length);
+  }
 }

@@ -1,54 +1,29 @@
 #pragma once
-#include <climits>
-#include <netinet/in.h>
-#include <string>
-#include <vector>
-typedef unsigned char byte;
+#include "./DataOutput.hpp"
+#include "DataInput.hpp"
 
-namespace java{
-    namespace io{
-        class DataOutput{
-            public:
-            DataOutput(){
-                byteStream=std::vector<byte>();
-            }
-            DataOutput(int l){
-                byteStream=std::vector<byte>(l);
-            }
-            std::vector<byte> byteStream;
-            template<typename T>
-            void WriteValue(T &val){
-                byteStream.insert(byteStream.end()
-                ,reinterpret_cast<byte*>(&val),
-                reinterpret_cast<byte*>(&val)+sizeof(T));
-            }
-            void WriteFloat(float val){
-                WriteValue(val);
-            }
-            void WriteInt(int val){
-                auto i=htonl(val);
-                WriteValue(i);
-            }
-            void WriteByte(byte b){
-                WriteValue(b);
-            }
-            void WriteShort(short s){
-                auto i=htons(s);
-                WriteValue(i);
-            }
-            void Write(byte s[]){
-                WriteValue(s);
-            }
-            void writeUTF(std::string str){
-                WriteValue(str);
-            }
-            std::string _str(){
-                std::string k="";
-                for(auto c:byteStream){
-                    k+=c;
-                }
-                return k;
-            }
-        };
-    }
+java::io::DataOutput::DataOutput() { byteStream = std::vector<byte>(); }
+java::io::DataOutput::DataOutput(int l) { byteStream = std::vector<byte>(l); }
+template <typename T> void java::io::DataOutput::WriteValue(T &val) {
+  byteStream.insert(byteStream.end(), reinterpret_cast<byte *>(&val),
+                    reinterpret_cast<byte *>(&val) + sizeof(T));
+}
+void java::io::DataOutput::WriteFloat(float val) { WriteValue(val); }
+void java::io::DataOutput::WriteInt(int val) {
+  auto i = htonl(val);
+  WriteValue(i);
+}
+void java::io::DataOutput::WriteByte(byte b) { WriteValue(b); }
+void java::io::DataOutput::WriteShort(short s) {
+  auto i = htons(s);
+  WriteValue(i);
+}
+void java::io::DataOutput::Write(byte s[]) { WriteValue(s); }
+void java::io::DataOutput::writeUTF(std::string str) { WriteValue(str); }
+std::string java::io::DataOutput::_str() {
+  std::string k = "";
+  for (auto c : byteStream) {
+    k += c;
+  }
+  return k;
 }
