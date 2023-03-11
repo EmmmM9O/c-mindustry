@@ -1,46 +1,11 @@
 #pragma once
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/path.hpp>
-#include <string>
+#include "./Fi.hpp"
 using namespace boost;
-namespace arc{
-    namespace files{
-        enum class FileType{
-            absolute
-        };
-        class File{
-            public:
-            filesystem::path path;
-            File(std::string pa){
-                path=filesystem::path(pa);
-            }
-            std::string getPath(){
-                return path.string();
-            }
-            std::string getName(){
-                return path.filename().string();
-            }
 
-        };
-        class Fi{
-            protected:
-            File file;
-            FileType type;
-            
-            Fi(std::string p,FileType t):file(p){
-                type=t;
-            }
-            public:
-            Fi(std::string p):file(p){
-                type=FileType::absolute;
-            }
-            std::string path(){
-                return file.getPath();
-            }
-            std::string name(){
-                return file.getName();
-            }
-
-        };
-    }
-}
+arc::files::File::File(std::string pa) { path = filesystem::path(pa); }
+std::string arc::files::File::getPath() { return path.string(); }
+std::string arc::files::File::getName() { return path.filename().string(); }
+arc::files::Fi::Fi(std::string p, FileType t) : file(p) { type = t; }
+arc::files::Fi::Fi(std::string p) : file(p) { type = FileType::absolute; }
+std::string arc::files::Fi::path() { return file.getPath(); }
+std::string arc::files::Fi::name() { return file.getName(); }

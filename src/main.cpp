@@ -1,8 +1,5 @@
 
-#include <cstdio>
-#include <cstdlib>
 #include <iostream>
-#include <thread>
 #include "mindustry/core/NetClient.cpp"
 #include "./arc/util/Log.cpp"
 #include "mindustry/gen/Packets.cpp"

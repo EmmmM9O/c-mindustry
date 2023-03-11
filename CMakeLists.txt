@@ -6,13 +6,11 @@ set(BUILD_DIR "./build/.")
 add_compile_options(-std=c++2a)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 file(GLOB_RECURSE DIR_SRCS 
-	"${PROJECT_SOURCE_DIR}/src/*.h"
 	"${PROJECT_SOURCE_DIR}/src/*.cpp"
-	"${PROJECT_SOURCE_DIR}/src/*.hpp"
 	"${PROJECT_SOURCE_DIR}/src/*.cc"
 )
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/build/")
-add_executable(${CMAKE_PROJECT_NAME} "src/main.cpp")
+add_executable(${CMAKE_PROJECT_NAME} "./src/main.cpp")
 
 add_custom_command(
 	TARGET ${CMAKE_PROJECT_NAME}

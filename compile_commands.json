@@ -1,7 +1,172 @@
 [
 {
   "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/ApplicationListener.cpp.o -c /home/emmmPad/c-mindustry/src/arc/ApplicationListener.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/ApplicationListener.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/Events.cpp.o -c /home/emmmPad/c-mindustry/src/arc/Events.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/Events.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/assets/AssetDescriptor.cpp.o -c /home/emmmPad/c-mindustry/src/arc/assets/AssetDescriptor.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/assets/AssetDescriptor.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/assets/Loadable.cpp.o -c /home/emmmPad/c-mindustry/src/arc/assets/Loadable.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/assets/Loadable.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/files/Fi.cpp.o -c /home/emmmPad/c-mindustry/src/arc/files/Fi.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/files/Fi.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/func/Func.cpp.o -c /home/emmmPad/c-mindustry/src/arc/func/Func.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/func/Func.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/ArcNet.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/ArcNet.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/ArcNet.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/Client.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/Client.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/Client.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/Connection.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/Connection.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/Connection.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/FrameworkMessage.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/FrameworkMessage.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/FrameworkMessage.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/NetSerializer.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/NetSerializer.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/NetSerializer.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/TcpConnection.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/TcpConnection.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/TcpConnection.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/net/UdpConnection.cpp.o -c /home/emmmPad/c-mindustry/src/arc/net/UdpConnection.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/net/UdpConnection.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/util/Log.cpp.o -c /home/emmmPad/c-mindustry/src/arc/util/Log.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/util/Log.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/util/io/Reads.cpp.o -c /home/emmmPad/c-mindustry/src/arc/util/io/Reads.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/util/io/Reads.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/arc/util/io/Writes.cpp.o -c /home/emmmPad/c-mindustry/src/arc/util/io/Writes.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/arc/util/io/Writes.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/java/io/DataInput.cpp.o -c /home/emmmPad/c-mindustry/src/java/io/DataInput.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/java/io/DataInput.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/java/io/DataOutput.cpp.o -c /home/emmmPad/c-mindustry/src/java/io/DataOutput.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/java/io/DataOutput.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/java/nio/ByteBuffer.cpp.o -c /home/emmmPad/c-mindustry/src/java/nio/ByteBuffer.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/java/nio/ByteBuffer.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/java/object.cpp.o -c /home/emmmPad/c-mindustry/src/java/object.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/java/object.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
   "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/main.cpp.o -c /home/emmmPad/c-mindustry/src/main.cpp",
   "file": "/home/emmmPad/c-mindustry/src/main.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/Vars.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/Vars.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/Vars.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/core/NetClient.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/core/NetClient.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/core/NetClient.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/gen/Call.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/gen/Call.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/gen/Call.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/gen/Packets.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/gen/Packets.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/gen/Packets.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/io/TypeIO.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/io/TypeIO.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/io/TypeIO.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/net/ArcNetProvider.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/net/ArcNetProvider.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/net/ArcNetProvider.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/net/Net.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/net/Net.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/net/Net.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/net/NetConnection.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/net/NetConnection.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/net/NetConnection.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/net/Packet.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/net/Packet.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/net/Packet.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/net/Packets.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/net/Packets.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/net/Packets.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/mindustry/net/Streamable.cpp.o -c /home/emmmPad/c-mindustry/src/mindustry/net/Streamable.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/mindustry/net/Streamable.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/struct/Socket.cpp.o -c /home/emmmPad/c-mindustry/src/struct/Socket.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/struct/Socket.cpp"
+},
+{
+  "directory": "/home/emmmPad/c-mindustry",
+  "command": "/usr/bin/clang++   -std=c++2a -std=gnu++20 -o CMakeFiles/c-mindustry.dir/src/tools/PingHost.cpp.o -c /home/emmmPad/c-mindustry/src/tools/PingHost.cpp",
+  "file": "/home/emmmPad/c-mindustry/src/tools/PingHost.cpp"
 }
 ]
