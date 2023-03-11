@@ -1,39 +1,12 @@
 #pragma once
-#include <boost/any.hpp>
-#include <iostream>
-#include "./NetConnection.cpp"
-#include "../../arc/util/io/Writes.cpp"
-#include "../../arc/util/io/Reads.cpp"
-namespace mindustry {
-    namespace net {
-        class Packet{
-            public :
-            static const int priorityLow =8;
-            static const int priorityHigh=2;
-            static const int priorityNormal=1;
-            virtual void read(arc::util::io::Reads &read){
-                std::cout<<"Read!";
-            }
-            virtual void write(arc::util::io::Writes &write){
+#include "./Packet.hpp"
 
-            }
-            virtual void read(arc::util::io::Reads &readr,int length){
-                read(readr);
-            }
-            
-            virtual void handled(){
-
-            }
-            virtual int getPriority(){
-                return priorityNormal;
-            }
-            virtual void handleClient(){
-                
-            }
-            virtual void handleServer(mindustry::net::NetConnection con){
-	    }
-        };
-    }
+void mindustry::net::Packet::read(arc::util::io::Reads &read) {}
+void mindustry::net::Packet::write(arc::util::io::Writes &write) {}
+void mindustry::net::Packet::read(arc::util::io::Reads &readr, int length) {
+  read(readr);
 }
-template <typename T>
-concept is_Packet=std::is_base_of<mindustry::net::Packet,T>::value;
+void mindustry::net::Packet::handled() {}
+int mindustry::net::Packet::getPriority() { return priorityNormal; }
+void mindustry::net::Packet::handleClient() {}
+void mindustry::net::Packet::handleServer(mindustry::net::NetConnection con) {}

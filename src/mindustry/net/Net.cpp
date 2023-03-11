@@ -1,137 +1,102 @@
 #pragma once
 
-#include "../../arc/func/Func.hpp"
-#include "../../arc/util/Log.cpp"
-#include "./Packet.cpp"
-#include "./Packets.cpp"
-#include "./Streamable.cpp"
-#include <boost/any.hpp>
-#include <cstddef>
-#include <cstdio>
-#include <forward_list>
-#include <future>
-#include <iostream>
-#include <map>
-#include <math.h>
-#include <type_traits>
+#include "./Net.hpp"
 using namespace mindustry::net::Packets;
 using namespace arc::util;
-template <typename T, typename T1>
-concept IsExtend = std::is_base_of<T1, T>::value;
-namespace mindustry {
-namespace net {
-class NetProvider {
-public:
-  virtual void connectClient(std::string ip, int port, void (*success)()) = 0;
-  virtual void sendClient(boost::any object, bool reliable) {}
-  virtual void disconnectClient() {}
-};
-class Net {
-public:
-  Net(NetProvider &provide) { provider = &provide; }
-  NetProvider *provider;
-  bool active = false;
-  bool server = false;
-  bool clientLoaded = true;
-  static std::map<unsigned char, Packet *(*)()> packetProvs2;
-  static std::map<unsigned char, boost::any> packetProvs;
-  template <IsExtend<Packet> T> static T newPacket(unsigned char id) {
-    auto key = id & 0xff;
-    if (packetProvs.count(key) <= 0) {
-      std::cout << "UnknowKey" << key;
-      throw "Unknow Key";
-    }
-    auto t = packetProvs[key];
-    try {
-      return boost::any_cast<T (*)()>(t)();
-    } catch (boost::bad_any_cast &e) {
-      std::cout << "Error from Net::newPacket";
-      perror(e.what());
-      exit(1);
-    }
-  }
-  static byte getPacketId(boost::any obj) {
-    for (auto i : packetProvs) {
-      if (i.second.type().hash_code() == obj.type().hash_code()) {
-        return i.first;
-      }
-    }
-    return -1;
-  }
-  std::map<int, Streamable::StreamBuilder> streams;
-  std::map<std::string, boost::any> clientListeners;
-  template <typename T, Cons<T> F> void handleClient(F listener) {
-    clientListeners[typeid(T).name()] = (void (*)(T))listener;
-  }
-  template <is_Packet T> static void registerPacket(int id) {
-    packetProvs[id] = (T(*)())[]()->T { return T(); };
-    packetProvs2[id] = (Packet * (*)())[]()->Packet * { return new T; };
-  }
-  static Packet *newPacketI(unsigned char id) {
-    auto key = id & 0xff;
-    if (packetProvs2.count(key) < 0) {
-      throw "Error No Packet";
-    }
-    return packetProvs2[key]();
-  }
-  template <is_Packet T> void handleClientReceived(T pac, boost::any obj) {
-    pac.handled();
-    if (obj.type() == typeid(StreamBegin)) {
-      auto c = boost::any_cast<StreamBegin>(obj);
-      streams[c.id] = Streamable::StreamBuilder(c);
-    } else if (obj.type() == typeid(StreamChunk)) {
-
-      auto c = boost::any_cast<StreamChunk>(obj);
-      if (streams.count(c.id) <= 0)
-        return;
-      auto builder = streams[c.id];
-      builder.add(c.data);
-      if (builder.isDone()) {
-        streams.erase(builder.id);
-        auto e = builder.build();
-        handleClientReceived(e, e);
-      }
-    } else {
-      int p = pac.getPriority();
-      if (clientLoaded || p == Packet::priorityHigh) {
-        auto key = obj.type().name();
-        if (clientListeners.count(key) > 0) {
-          auto t = clientListeners[key];
-          try {
-            boost::any_cast<void (*)(T)>(t)(pac);
-          } catch (boost::bad_any_cast &e) {
-            perror(e.what());
-            exit(1);
-          }
-        } else {
-          pac.handleClient();
-        }
-      }
-    }
-  }
-  template <Runnable Run> void connect(std::string ip, int port, Run success) {
-    try {
-
-      provider->connectClient(ip, port, (void (*)())success);
-      active = true;
-      server = false;
-    } catch (...) {
-      Log::info("错误!");
-    }
-  }
-  void disconnect() {
-    if (active && !server) {
-      Log::info("Disconnecting.");
-    }
-    provider->disconnectClient();
-    server = false;
-    active = false;
-  }
-};
-
-} // namespace net
-} // namespace mindustry
 using namespace mindustry::net;
+Net::Net(NetProvider &provide) { provider = &provide; }
+template <IsExtend<Packet> T> T Net::newPacket(unsigned char id) {
+  auto key = id & 0xff;
+  if (packetProvs.count(key) <= 0) {
+    std::cout << "UnknowKey" << key;
+    throw "Unknow Key";
+  }
+  auto t = packetProvs[key];
+  try {
+    return boost::any_cast<T (*)()>(t)();
+  } catch (boost::bad_any_cast &e) {
+    std::cout << "Error from Net::newPacket";
+    perror(e.what());
+    exit(1);
+  }
+}
+byte Net::getPacketId(boost::any obj) {
+  for (auto i : packetProvs) {
+    if (i.second.type().hash_code() == obj.type().hash_code()) {
+      return i.first;
+    }
+  }
+  return -1;
+}
+template <typename T, Cons<T> F> void Net::handleClient(F listener) {
+  clientListeners[typeid(T).name()] = (void (*)(T))listener;
+}
+template <is_Packet T> void Net::registerPacket(int id) {
+  packetProvs[id] = (T(*)())[]()->T { return T(); };
+  packetProvs2[id] = (Packet * (*)())[]()->Packet * { return new T; };
+}
+Packet *Net::newPacketI(unsigned char id) {
+  auto key = id & 0xff;
+  if (packetProvs2.count(key) < 0) {
+    throw "Error No Packet";
+  }
+  return packetProvs2[key]();
+}
+template <is_Packet T> void Net::handleClientReceived(T pac, boost::any obj) {
+  pac.handled();
+  if (obj.type() == typeid(StreamBegin)) {
+    auto c = boost::any_cast<StreamBegin>(obj);
+    streams[c.id] = Streamable::StreamBuilder(c);
+  } else if (obj.type() == typeid(StreamChunk)) {
+
+    auto c = boost::any_cast<StreamChunk>(obj);
+    if (streams.count(c.id) <= 0)
+      return;
+    auto builder = streams[c.id];
+    builder.add(c.data);
+    if (builder.isDone()) {
+      streams.erase(builder.id);
+      auto e = builder.build();
+      handleClientReceived(e, e);
+    }
+  } else {
+    int p = pac.getPriority();
+    if (clientLoaded || p == Packet::priorityHigh) {
+      auto key = obj.type().name();
+      if (clientListeners.count(key) > 0) {
+        auto t = clientListeners[key];
+        try {
+          boost::any_cast<void (*)(T)>(t)(pac);
+        } catch (boost::bad_any_cast &e) {
+          perror(e.what());
+          exit(1);
+        }
+      } else {
+        pac.handleClient();
+      }
+    }
+  }
+}
+template <Runnable Run>
+void Net::connect(std::string ip, int port, Run success) {
+  try {
+
+    provider->connectClient(ip, port, (void (*)())success);
+    active = true;
+    server = false;
+  } catch (...) {
+    Log::info("错误!");
+  }
+}
+void Net::disconnect() {
+  if (active && !server) {
+    Log::info("Disconnecting.");
+  }
+  provider->disconnectClient();
+  server = false;
+  active = false;
+}
+
 std::map<unsigned char, boost::any> Net::packetProvs;
 std::map<unsigned char, Packet *(*)()> Net::packetProvs2;
 Streamable::_Streamable_ Streamable::StreamBuilder::build() {

@@ -1,8 +1,2 @@
 #pragma once
-namespace mindustry{
-    namespace net {
-        class NetConnection{
-
-        };
-    }
-}
+#include "./NetConnection.hpp"

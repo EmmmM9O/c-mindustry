@@ -1,25 +1,17 @@
-#include "../../arc/ApplicationListener.cpp"
-#include "../../arc/util/Log.cpp"
-#include "../Vars.cpp"
-#include "../net/Packets.cpp"
-#include "../net/ArcNetProvider.cpp"
+#include "./NetClient.hpp"
 using namespace mindustry::Vars;
 using namespace mindustry::net::Packets;
 using namespace arc::util;
-namespace mindustry{
-    namespace core{
-        class NetClient:public arc::ApplicationListener{
-            public:
-            NetClient(){
-                Vars::net.handleClient<::Connect>
-                ([](auto packet)->void{
-                    Log::info("Connecting to server: ${}", packet.addressTCP);
-                });
-                
-            }
-        };
-    }
-    namespace Vars{
-        core::NetClient netClient;
-    }
+using namespace mindustry::core;
+NetClient::NetClient() {
+  Vars::net.handleClient<::Connect>([](auto packet) -> void {
+    Log::info("Connecting to server: ${}", packet.addressTCP);
+  });
 }
+namespace mindustry {
+namespace core {
+namespace Vars {
+core::NetClient netClient;
+}
+} // namespace core
+} // namespace mindustry
