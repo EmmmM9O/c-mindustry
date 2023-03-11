@@ -1,27 +1,15 @@
 #pragma once
 
-#include "../../java/nio/ByteBuffer.cpp"
-#include <boost/any.hpp>
-namespace arc {
-    namespace net {
-        class NetSerializer{
-            public:
-            virtual void write(java::nio::ByteBuffer &buffer, boost::any){
+#include "./NetSerializer.hpp"
+void arc::net::NetSerializer::write(java::nio::ByteBuffer &buffer, boost::any) {
+}
+boost::any arc::net::NetSerializer::read(java::nio::ByteBuffer &buffer) {
+  return nullptr;
+}
+int arc::net::NetSerializer::getLengthLength() { return 2; }
+void arc::net::NetSerializer::writeLength(java::nio::ByteBuffer &buffer,
+                                          int length) {}
 
-            }
-            virtual boost::any read(java::nio::ByteBuffer &buffer){
-                return nullptr;
-            }
-            virtual int getLengthLength(){
-                return 2;
-            }
-            virtual void writeLength(java::nio::ByteBuffer &buffer, int length){
-
-            }
-            
-            virtual int readLength(java::nio::ByteBuffer &buffer){
-                return buffer.ReadShort();
-            }
-        };
-    }
+int arc::net::NetSerializer::readLength(java::nio::ByteBuffer &buffer) {
+  return buffer.ReadShort();
 }
