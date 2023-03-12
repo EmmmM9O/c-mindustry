@@ -48,5 +48,7 @@ public:
   void sendClient(boost::any object, bool reliable) override;
 };
 } // namespace net
-
+namespace Vars {
+extern mindustry::net::Net net;
+}
 } // namespace mindustry

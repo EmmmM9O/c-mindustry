@@ -1,5 +1,4 @@
 #pragma once
-
 #include <array>
 #include <boost/any.hpp>
 #include <map>
@@ -8,7 +7,7 @@ namespace net {
 namespace FrameworkMessage {
 class _FrameworkMessage_ {};
 class KeepAlive : public _FrameworkMessage_ {};
-const KeepAlive keepAlive;
+const extern KeepAlive keepAlive;
 class RegisterTCP : public _FrameworkMessage_ {
 public:
   int connectionID;
@@ -18,6 +17,8 @@ public:
   int connectionID;
 };
 class DiscoverHost : public _FrameworkMessage_ {};
+const extern DiscoverHost discoverHost;
+extern std::vector<size_t> maps;
 class Ping : public _FrameworkMessage_ {
 public:
   int id;

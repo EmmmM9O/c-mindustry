@@ -27,9 +27,9 @@ namespace Vars {
 PacketSerializer _pcs = PacketSerializer();
 _NetListener_ _lis = _NetListener_();
 ArcNetProvider _pro = ArcNetProvider();
-mindustry::net::Net net = mindustry::net::Net(_pro);
 } // namespace Vars
-
+} // namespace mindustry
+mindustry::net::Net mindustry::Vars::net = mindustry::net::Net(_pro);
 mindustry::net::ArcNetProvider::ArcNetProvider()
     : client(8192, 8192, &Vars::_pcs) {
   ArcNet::errorHandler = [](std::exception err) -> void {
@@ -186,4 +186,3 @@ mindustry::net::PacketSerializer::readFramework(java::nio::ByteBuffer &buffer) {
   }
   throw "Unknown framework message!";
 }
-} // namespace mindustry

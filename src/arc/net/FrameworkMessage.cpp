@@ -1,15 +1,10 @@
 #pragma once
 
 #include "./FrameworkMessage.hpp"
-namespace arc {
-namespace net {
-namespace FrameworkMessage {
-
-DiscoverHost discoverHost;
-std::vector<size_t> maps;
-} // namespace FrameworkMessage
-} // namespace net
-} // namespace arc
+const arc::net::FrameworkMessage::DiscoverHost
+    arc::net::FrameworkMessage::discoverHost = DiscoverHost();
+const arc::net::FrameworkMessage::KeepAlive
+    arc::net::FrameworkMessage::keepAlive = KeepAlive();
 void arc::net::FrameworkMessage::init() {
   maps.push_back(typeid(_FrameworkMessage_).hash_code());
   maps.push_back(typeid(RegisterUDP).hash_code());
