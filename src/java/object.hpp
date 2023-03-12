@@ -4,6 +4,8 @@
 #include <string>
 #include <string_view>
 #include <type_traits>
+template <typename T, typename T1>
+concept AnyType = std::is_base_of<T1, T>();
 namespace java {
 class Object {
 public:
@@ -16,5 +18,8 @@ public:
   boost::any *DataAny;
   template <typename T> T cast() noexcept(std::is_base_of<Father, T>::value);
   template <typename T> bool is();
+  template <AnyType<Father> T> AnyObject(T *t);
+  bool empty();
+  AnyObject();
 };
 } // namespace java

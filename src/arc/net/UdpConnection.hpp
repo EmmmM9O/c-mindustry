@@ -9,19 +9,19 @@
 using namespace java::nio;
 namespace arc {
 namespace net {
-class UdpConnection {
+template <typename T> class UdpConnection {
 private:
   Struct::Socket socket;
   ByteBuffer readBuffer, writeBuffer;
-  NetSerializer *serialization;
+  NetSerializer<T> *serialization;
 
 public:
-  UdpConnection(NetSerializer *serialization_, int bufferSize);
+  UdpConnection(NetSerializer<T> *serialization_, int bufferSize);
   ~UdpConnection();
   void close();
   void connect(int port, std::string ip);
-  boost::any readObject();
-  template <typename T> void send(T obj);
+  java::AnyObject<T> readObject();
+  void send(java::AnyObject<T> obj);
 };
 } // namespace net
 } // namespace arc

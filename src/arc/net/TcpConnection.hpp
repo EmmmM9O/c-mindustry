@@ -7,10 +7,10 @@
 #include <iostream>
 namespace arc {
 namespace net {
-class TcpConnection {
+template <typename T> class TcpConnection {
 private:
   bool debug = true;
-  NetSerializer *serialization;
+  NetSerializer<T> *serialization;
   Struct::Socket socket;
   java::nio::ByteBuffer readBuffer, writeBuffer;
   int timeout;
@@ -19,12 +19,12 @@ public:
   std::string getIP();
   ~TcpConnection();
   short currentObjectLength = 0;
-  TcpConnection(NetSerializer *serialization_, int writeBufferSize,
+  TcpConnection(NetSerializer<T> *serialization_, int writeBufferSize,
                 int objectBufferSize);
   void close();
   void connect(int port, std::string ip, int time);
-  boost::any readObject();
-  int send(boost::any obj);
+  java::AnyObject<T> readObject();
+  int send(java::AnyObject<T> obj);
 };
 } // namespace net
 } // namespace arc

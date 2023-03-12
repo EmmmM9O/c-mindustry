@@ -8,34 +8,30 @@
 
 namespace arc {
 namespace net {
-class Connection;
-class NetListener {
+template <typename T> class Connection;
+template <typename T> class NetListener {
 public:
-  virtual void received(Connection *con, boost::any obj) {}
-  virtual void connected(Connection *connection) {}
+  virtual void received(Connection<T> *con, java::AnyObject<T>) {}
+  virtual void connected(Connection<T> *connection) {}
 };
-class Connection {
+template <typename T> class Connection {
 public:
   std::string name;
-  TcpConnection tcp;
-  UdpConnection udp;
-  std::list<NetListener *> listeners;
+  TcpConnection<T> tcp;
+  UdpConnection<T> udp;
+  std::list<NetListener<T> *> listeners;
   volatile bool isConnected;
   int id = -1;
-  Connection(NetSerializer *serialization, int writeBufferSize,
+  Connection(NetSerializer<T> *serialization, int writeBufferSize,
              int objectBufferSize);
-
-public:
   std::string getIP();
   int getID();
   bool getIsConnected();
-  void sendTCP(boost::any o);
-
-  void sendUDP(boost::any o);
-
+  void sendTCP(java::AnyObject<T> o);
+  void sendUDP(java::AnyObject<T> o);
   void close();
-  void notifyReceived(boost::any obj);
-  void addListener(NetListener *listener);
+  void notifyReceived(java::AnyObject<T> obj);
+  void addListener(NetListener<T> *listener);
 };
 } // namespace net
 } // namespace arc

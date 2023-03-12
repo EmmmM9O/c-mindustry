@@ -22,3 +22,16 @@ template <typename T>
 bool java::AnyObject<Father>::is() {
   return DataAny->type().hash_code() == typeid(Father).hash_code();
 }
+template <typename Father> bool java::AnyObject<Father>::empty() {
+  return DataObject == nullptr || DataAny->empty();
+}
+template <typename Father>
+template <AnyType<Father> T>
+java::AnyObject<Father>::AnyObject(T *t) {
+  DataObject = t;
+  DataAny = t;
+}
+template <typename Father> java::AnyObject<Father>::AnyObject() {
+  DataObject = nullptr;
+  DataAny = nullptr;
+}

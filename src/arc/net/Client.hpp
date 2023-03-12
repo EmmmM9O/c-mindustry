@@ -12,17 +12,16 @@
 #include <type_traits>
 namespace arc {
 namespace net {
-class Client : public Connection {
+template <typename T> class Client : public Connection<T> {
 private:
   std::thread thread;
   bool udpRegistered, tcpRegistered;
-  NetSerializer *serialization;
-
+  NetSerializer<T> *serialization;
 public:
   bool debug = true;
   time_t time;
   Client(int writeBufferSize, int objectBufferSize,
-         NetSerializer *serialization_);
+         NetSerializer<T> *serialization_);
   void connect(int port, std::string host, int time);
   void keepAlive();
 };

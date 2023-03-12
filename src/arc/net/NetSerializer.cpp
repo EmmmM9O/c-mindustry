@@ -1,15 +1,21 @@
 #pragma once
 
 #include "./NetSerializer.hpp"
-void arc::net::NetSerializer::write(java::nio::ByteBuffer &buffer, boost::any) {
+template <typename T>
+void arc::net::NetSerializer<T>::write(java::nio::ByteBuffer &buffer,
+                                       java::AnyObject<T>) {}
+template <typename T>
+java::AnyObject<T>
+arc::net::NetSerializer<T>::read(java::nio::ByteBuffer &buffer) {
+  return java::AnyObject<T>();
 }
-boost::any arc::net::NetSerializer::read(java::nio::ByteBuffer &buffer) {
-  return nullptr;
+template <typename T> int arc::net::NetSerializer<T>::getLengthLength() {
+  return 2;
 }
-int arc::net::NetSerializer::getLengthLength() { return 2; }
-void arc::net::NetSerializer::writeLength(java::nio::ByteBuffer &buffer,
-                                          int length) {}
-
-int arc::net::NetSerializer::readLength(java::nio::ByteBuffer &buffer) {
+template <typename T>
+void arc::net::NetSerializer<T>::writeLength(java::nio::ByteBuffer &buffer,
+                                             int length) {}
+template <typename T>
+int arc::net::NetSerializer<T>::readLength(java::nio::ByteBuffer &buffer) {
   return buffer.ReadShort();
 }

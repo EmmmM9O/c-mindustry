@@ -1,22 +1,25 @@
 #include "./TcpConnection.hpp"
-
-std::string arc::net::TcpConnection::getIP() { return socket.Chost; }
-arc::net::TcpConnection::~TcpConnection() { close(); }
+template <typename T> std::string arc::net::TcpConnection<T>::getIP() {
+  return socket.Chost;
+}
+template <typename T> arc::net::TcpConnection<T>::~TcpConnection() { close(); }
 short currentObjectLength = 0;
-arc::net::TcpConnection::TcpConnection(NetSerializer *serialization_,
-                                       int writeBufferSize,
-                                       int objectBufferSize)
+template <typename T>
+arc::net::TcpConnection<T>::TcpConnection(NetSerializer<T> *serialization_,
+                                          int writeBufferSize,
+                                          int objectBufferSize)
     : socket(Struct::domain::IPV4, Struct::type::TCP, 0) {
   serialization = serialization_;
   readBuffer = java::nio::ByteBuffer::allocate(objectBufferSize);
   writeBuffer = java::nio::ByteBuffer::allocate(writeBufferSize);
   readBuffer.flip();
 }
-void arc::net::TcpConnection::close() {
+template <typename T> void arc::net::TcpConnection<T>::close() {
   if (socket.connectd)
     socket.close();
 }
-void arc::net::TcpConnection::connect(int port, std::string ip, int time) {
+template <typename T>
+void arc::net::TcpConnection<T>::connect(int port, std::string ip, int time) {
   timeout = time;
   if (socket.connectd)
     close();
@@ -26,7 +29,8 @@ void arc::net::TcpConnection::connect(int port, std::string ip, int time) {
   readBuffer.flip();
   socket.connect(port, ip);
 }
-boost::any arc::net::TcpConnection::readObject() {
+template <typename T>
+java::AnyObject<T> arc::net::TcpConnection<T>::readObject() {
   if (socket.connectd) {
     if (currentObjectLength == 0) {
       // currentObjectLength=readBuffer.ReadShort();
@@ -47,10 +51,11 @@ boost::any arc::net::TcpConnection::readObject() {
     readBuffer.streamIter = b;
     return serialization->read(readBuffer);
   } else {
-    return nullptr;
+    return java::AnyObject<T>();
   }
 }
-int arc::net::TcpConnection::send(boost::any obj) {
+template <typename T>
+int arc::net::TcpConnection<T>::send(java::AnyObject<T> obj) {
   int lengthLength = serialization->getLengthLength();
   int start = writeBuffer.streamIter;
   writeBuffer.streamIter += lengthLength;
