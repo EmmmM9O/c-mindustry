@@ -1,29 +1,31 @@
 #pragma once
 
 #include "./Net.hpp"
+#include "Streamable.hpp"
 using namespace mindustry::net::Packets;
 using namespace arc::util;
 using namespace mindustry::net;
-Net::Net(NetProvider &provide) { provider = &provide; }
-template <IsExtend<Packet> T> T Net::newPacket(unsigned char id) {
-  auto key = id & 0xff;
-  if (packetProvs.count(key) <= 0) {
-    std::cout << "UnknowKey" << key;
-    throw "Unknow Key";
-  }
-  auto t = packetProvs[key];
-  try {
-    return boost::any_cast<T (*)()>(t)();
-  } catch (boost::bad_any_cast &e) {
-    std::cout << "Error from Net::newPacket";
-    perror(e.what());
-    exit(1);
-  }
-}
-byte Net::getPacketId(boost::any obj) {
+Net::Net(NetProvider<Packet> &provide) { provider = &provide; }
+
+byte Net::getPacketId(
+    java::AnyTwo<
+        java::AnyObject<Packet>,
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+        obj) {
   for (auto i : packetProvs) {
-    if (i.second.type().hash_code() == obj.type().hash_code()) {
-      return i.first;
+    auto p = i.second();
+    if (p.key == obj.key) {
+      if (p.key == 1) {
+        java::AnyObject<Packet> *f1 = p.first, *f2 = obj.first;
+        if (f1->DataAny->type() == f2->DataAny->type())
+          return i.first;
+      } else if (p.key == 2) {
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>
+            *f1 = p.second,
+            *f2 = obj.second;
+        if (f1->DataAny->type() == f2->DataAny->type())
+          return i.first;
+      }
     }
   }
   return -1;
@@ -31,16 +33,31 @@ byte Net::getPacketId(boost::any obj) {
 template <typename T, Cons<T> F> void Net::handleClient(F listener) {
   clientListeners[typeid(T).name()] = (void (*)(T))listener;
 }
-template <is_Packet T> void Net::registerPacket(int id) {
-  packetProvs[id] = (T(*)())[]()->T { return T(); };
-  packetProvs2[id] = (Packet * (*)())[]()->Packet * { return new T; };
+template <typename T> void Net::registerPacket(int id) {
+  packetProvs[id] =
+      (java::AnyTwo<
+          java::AnyObject<Packet>,
+          java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(
+              *)())[]()
+          ->java::AnyTwo<
+              java::AnyObject<Packet>,
+              java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> {
+    return java::AnyTwo<
+        java::AnyObject<Packet>,
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(
+        new T());
+  };
 }
-Packet *Net::newPacketI(unsigned char id) {
+java::AnyTwo<java::AnyObject<Packet>,
+             java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+Net::newPacketI(unsigned char id) {
   auto key = id & 0xff;
-  if (packetProvs2.count(key) < 0) {
-    throw "Error No Packet";
+  if (packetProvs.count(key) < 0) {
+    return java::AnyTwo<
+        java::AnyObject<Packet>,
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>();
   }
-  return packetProvs2[key]();
+  return packetProvs[key]();
 }
 template <is_Packet T> void Net::handleClientReceived(T pac, boost::any obj) {
   pac.handled();
@@ -97,10 +114,17 @@ void Net::disconnect() {
   active = false;
 }
 
-std::map<unsigned char, boost::any> Net::packetProvs;
-std::map<unsigned char, Packet *(*)()> Net::packetProvs2;
+std::map<
+    unsigned char,
+    java::AnyTwo<
+        java::AnyObject<Packet>,
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> (*)()>
+    Net::packetProvs;
 Streamable::_Streamable_ Streamable::StreamBuilder::build() {
-  auto s = Net::newPacket<Streamable::_Streamable_>(type);
-  s.stream = stream;
-  return s;
+  auto s = Net::newPacketI(type);
+  if (s.key != 1 || !s.first->is<Streamable::_Streamable_>())
+    return Streamable::_Streamable_();
+  auto p = s.first->cast<Streamable::_Streamable_>();
+  p.stream = stream;
+  return p;
 }

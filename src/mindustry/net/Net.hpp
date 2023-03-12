@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../arc/func/Func.hpp"
+#include "../../arc/net/FrameworkMessage.cpp"
 #include "../../arc/util/Log.cpp"
 #include "./Packet.cpp"
 #include "./Packets.cpp"
@@ -20,28 +21,46 @@ template <typename T, typename T1>
 concept IsExtend = std::is_base_of<T1, T>::value;
 namespace mindustry {
 namespace net {
+template <typename T>
+
 class NetProvider {
 public:
   virtual void connectClient(std::string ip, int port, void (*success)()) = 0;
-  virtual void sendClient(boost::any object, bool reliable) {}
+  virtual void sendClient(
+      java::AnyTwo<
+          java::AnyObject<Packet>,
+          java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+          object,
+      bool reliable) {}
   virtual void disconnectClient() {}
 };
+
 class Net {
 public:
-  Net(NetProvider &provide);
-  NetProvider *provider;
+  Net(NetProvider<Packet> &provide);
+  NetProvider<Packet> *provider;
   bool active = false;
   bool server = false;
   bool clientLoaded = true;
-  static std::map<unsigned char, Packet *(*)()> packetProvs2;
-  static std::map<unsigned char, boost::any> packetProvs;
-  template <IsExtend<Packet> T> static T newPacket(unsigned char id);
-  static byte getPacketId(boost::any obj);
+  static std::map<
+      unsigned char,
+      java::AnyTwo<java::AnyObject<Packet>,
+                   java::AnyObject<
+                       arc::net::FrameworkMessage::_FrameworkMessage_>> (*)()>
+      packetProvs;
+  static byte
+  getPacketId(java::AnyTwo<
+              java::AnyObject<Packet>,
+              java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+                  obj);
   std::map<int, Streamable::StreamBuilder> streams;
   std::map<std::string, boost::any> clientListeners;
   template <typename T, Cons<T> F> void handleClient(F listener);
-  template <is_Packet T> static void registerPacket(int id);
-  static Packet *newPacketI(unsigned char id);
+  template <typename T> static void registerPacket(int id);
+  static java::AnyTwo<
+      java::AnyObject<Packet>,
+      java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> 
+  newPacketI(unsigned char id);
   template <is_Packet T> void handleClientReceived(T pac, boost::any obj);
   template <Runnable Run> void connect(std::string ip, int port, Run success);
   void disconnect();

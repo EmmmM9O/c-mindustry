@@ -14,11 +14,17 @@ template <typename T> bool arc::net::Connection<T>::getIsConnected() {
   return isConnected;
 }
 template <typename T>
-void arc::net::Connection<T>::sendTCP(java::AnyObject<T> o) {
+void arc::net::Connection<T>::sendTCP(
+    java::AnyTwo<java::AnyObject<T>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        o) {
   tcp.send(o);
 }
 template <typename T>
-void arc::net::Connection<T>::sendUDP(java::AnyObject<T> o) {
+void arc::net::Connection<T>::sendUDP(
+    java::AnyTwo<java::AnyObject<T>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        o) {
   udp.send(o);
 }
 template <typename T> void arc::net::Connection<T>::close() {
@@ -27,7 +33,10 @@ template <typename T> void arc::net::Connection<T>::close() {
   udp.close();
 }
 template <typename T>
-void arc::net::Connection<T>::notifyReceived(java::AnyObject<T> obj) {
+void arc::net::Connection<T>::notifyReceived(
+    java::AnyTwo<java::AnyObject<T>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        obj) {
   for (auto i : listeners) {
     i->received(this, obj);
   }

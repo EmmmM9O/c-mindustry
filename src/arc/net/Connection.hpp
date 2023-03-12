@@ -11,7 +11,10 @@ namespace net {
 template <typename T> class Connection;
 template <typename T> class NetListener {
 public:
-  virtual void received(Connection<T> *con, java::AnyObject<T>) {}
+  virtual void received(
+      Connection<T> *con,
+      java::AnyTwo<java::AnyObject<T>,
+                   java::AnyObject<FrameworkMessage::_FrameworkMessage_>>) {}
   virtual void connected(Connection<T> *connection) {}
 };
 template <typename T> class Connection {
@@ -27,10 +30,19 @@ public:
   std::string getIP();
   int getID();
   bool getIsConnected();
-  void sendTCP(java::AnyObject<T> o);
-  void sendUDP(java::AnyObject<T> o);
+  void
+  sendTCP(java::AnyTwo<java::AnyObject<T>,
+                       java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+              o);
+  void
+  sendUDP(java::AnyTwo<java::AnyObject<T>,
+                       java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+              o);
   void close();
-  void notifyReceived(java::AnyObject<T> obj);
+  void notifyReceived(
+      java::AnyTwo<java::AnyObject<T>,
+                   java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+          obj);
   void addListener(NetListener<T> *listener);
 };
 } // namespace net

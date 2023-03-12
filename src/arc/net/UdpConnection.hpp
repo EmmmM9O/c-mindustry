@@ -20,8 +20,12 @@ public:
   ~UdpConnection();
   void close();
   void connect(int port, std::string ip);
-  java::AnyObject<T> readObject();
-  void send(java::AnyObject<T> obj);
+  java::AnyTwo<java::AnyObject<T>,
+               java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+  readObject();
+  void send(java::AnyTwo<java::AnyObject<T>,
+                         java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+                obj);
 };
 } // namespace net
 } // namespace arc

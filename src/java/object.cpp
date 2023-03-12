@@ -1,3 +1,5 @@
+
+#pragma once
 #include "./object.hpp"
 #include <boost/any.hpp>
 #include <cstdio>

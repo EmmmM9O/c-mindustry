@@ -18,11 +18,14 @@ void arc::net::Client<T>::connect(int port, std::string host, int time) {
       try {
         if (!this->isConnected)
           return;
-        java::AnyObject<T> o = this->tcp.readObject();
-        if (o.empty())
+        java::AnyTwo<java::AnyObject<T>,
+                     java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+            o = this->tcp.readObject();
+        if (o.key == -1)
           break;
         if (!tcpRegistered) {
-          if (o.template is<FrameworkMessage::RegisterTCP>()) {
+          if (o.key == 2 &&
+              o.second->template is<FrameworkMessage::RegisterTCP>()) {
             tcpRegistered = true;
             auto p = FrameworkMessage::RegisterTCP();
             this->sendUDP(p);
@@ -30,7 +33,8 @@ void arc::net::Client<T>::connect(int port, std::string host, int time) {
           }
         }
         if (!udpRegistered) {
-          if (o.template is<FrameworkMessage::RegisterUDP>()) {
+          if (o.key == 2 &&
+              o.second->template is<FrameworkMessage::RegisterUDP>()) {
             udpRegistered = true;
             break;
           }
@@ -54,7 +58,11 @@ template <typename T> void arc::net::Client<T>::keepAlive() {
   if (difftime(now, time) < 8)
     return;
   localtime(&time);
-  this->sendTCP(java::AnyObject<T>(&FrameworkMessage::keepAlive));
-  this->sendUDP(java::AnyObject<T>(&FrameworkMessage::keepAlive));
+  auto pac =
+      java::AnyTwo<java::AnyObject<T>,
+                   java::AnyObject<FrameworkMessage::_FrameworkMessage_>>(
+          &FrameworkMessage::keepAlive);
+  this->sendTCP(pac);
+  this->sendUDP(pac);
   // std::this_thread::sleep_for(std::chrono::seconds(8));
 }

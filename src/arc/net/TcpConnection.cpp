@@ -30,7 +30,9 @@ void arc::net::TcpConnection<T>::connect(int port, std::string ip, int time) {
   socket.connect(port, ip);
 }
 template <typename T>
-java::AnyObject<T> arc::net::TcpConnection<T>::readObject() {
+java::AnyTwo<java::AnyObject<T>,
+             java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+arc::net::TcpConnection<T>::readObject() {
   if (socket.connectd) {
     if (currentObjectLength == 0) {
       // currentObjectLength=readBuffer.ReadShort();
@@ -51,11 +53,14 @@ java::AnyObject<T> arc::net::TcpConnection<T>::readObject() {
     readBuffer.streamIter = b;
     return serialization->read(readBuffer);
   } else {
-    return java::AnyObject<T>();
+    return java::AnyTwo<java::AnyObject<T>,java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
   }
 }
 template <typename T>
-int arc::net::TcpConnection<T>::send(java::AnyObject<T> obj) {
+int arc::net::TcpConnection<T>::send(
+    java::AnyTwo<java::AnyObject<T>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        obj) {
   int lengthLength = serialization->getLengthLength();
   int start = writeBuffer.streamIter;
   writeBuffer.streamIter += lengthLength;

@@ -23,8 +23,12 @@ public:
                 int objectBufferSize);
   void close();
   void connect(int port, std::string ip, int time);
-  java::AnyObject<T> readObject();
-  int send(java::AnyObject<T> obj);
+  java::AnyTwo<java::AnyObject<T>,
+               java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+  readObject();
+  int send(java::AnyTwo<java::AnyObject<T>,
+                        java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+               obj);
 };
 } // namespace net
 } // namespace arc

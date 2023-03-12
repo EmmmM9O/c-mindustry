@@ -14,7 +14,11 @@ void ArcNetProvider::connectClient(std::string ip, int port,
   success();
 }
 void ArcNetProvider::disconnectClient() { client.close(); }
-void ArcNetProvider::sendClient(boost::any object, bool reliable) {
+void ArcNetProvider::sendClient(
+    java::AnyTwo<java::AnyObject<Packet>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        object,
+    bool reliable) {
   if (reliable) {
     client.sendTCP(object);
   } else {
@@ -37,30 +41,45 @@ mindustry::net::ArcNetProvider::ArcNetProvider()
   };
   client.addListener(&Vars::_lis);
 }
-void mindustry::net::_NetListener_::connected(Connection *connection) {
+void mindustry::net::_NetListener_::connected(Connection<Packet> *connection) {
   Connect c;
   c.addressTCP = connection->getIP();
   Vars::net.handleClientReceived(c, c);
 }
-void mindustry::net::_NetListener_ ::received(Connection *con, boost::any obj) {
+void mindustry::net::_NetListener_ ::received(
+    Connection<Packet> *con,
+    java::AnyTwo<java::AnyObject<Packet>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        obj) {
   try {
-    auto p = boost::any_cast<Packet>(obj);
-    Vars::net.handleClientReceived(p, obj);
+    // Vars::net.handleClientReceived(obj.DataObje
   } catch (...) {
   }
 }
-boost::any
+java::AnyTwo<java::AnyObject<Packet>,
+             java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
 mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
   try {
     byte id = buffer.ReadByte();
-    if (id == static_cast<byte>(-2))
-      return readFramework(buffer);
-    else {
+    if (id == static_cast<byte>(-2)) {
+      auto fp = readFramework(buffer);
+      auto p = java::AnyObject<FrameworkMessage::_FrameworkMessage_>();
+      p.DataObject = &fp;
+      *p.DataAny = fp;
+      return java::AnyTwo<
+          java::AnyObject<Packet>,
+          java::AnyObject<FrameworkMessage::_FrameworkMessage_>>(&p);
+    } else {
       auto packet = Net::newPacketI(id);
-      if (packet == nullptr) {
+      if (packet.key == -1) {
         Log::debug("空指针");
-        return nullptr;
+        return java::AnyTwo<
+            java::AnyObject<Packet>,
+            java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
       }
+      if (packet.key == 2)
+        return packet;
+      auto o = packet.first->DataObject;
       Log::debug("New Packet ${} size: ${} postion:${}", (int)id,
                  buffer.byteStream.size(), buffer.position());
       int length = buffer.ReadShort() & 0xffff;
@@ -72,7 +91,7 @@ mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
         temp.put(buffer.byteStream);
         temp.position(0);
         auto r = Reads(DataInput(buffer.byteStream));
-        packet->read(r, length);
+        o->read(r, length);
 
         temp.byteStream = r.input.byteStream;
         buffer.position(buffer.position() + temp.position());
@@ -85,27 +104,29 @@ mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
         temp.position(0);
         temp.limit(length);
         auto r = Reads(DataInput(buffer.byteStream));
-        packet->read(r, length);
+        o->read(r, length);
         buffer.position(read + buffer.position());
       }
       return packet;
     }
   } catch (char *&e) {
     Log::debug("${}", e);
-    return nullptr;
+    return java::AnyTwo<
+        java::AnyObject<Packet>,
+        java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
   }
 }
 
-void mindustry::net::PacketSerializer ::write(ByteBuffer &byteBuffer,
-                                              boost::any object) {
+void mindustry::net::PacketSerializer ::write(
+    ByteBuffer &byteBuffer,
+    java::AnyTwo<java::AnyObject<Packet>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        object) {
   try {
     if (debug) {
       int lastPos = byteBuffer.position();
     }
-    if (object.type() == typeid(ByteBuffer)) {
-      byteBuffer.put(boost::any_cast<ByteBuffer>(object));
-    }
-    if (FrameworkMessage::isExtend(object)) {
+    if (object.key == 2) {
       byteBuffer.put(static_cast<byte>(-2));
       writeFramework(byteBuffer, object);
     } else {
@@ -120,8 +141,8 @@ void mindustry::net::PacketSerializer ::write(ByteBuffer &byteBuffer,
       temp.byteStream = w.output.byteStream;
       auto length = (short)temp.position();
       byteBuffer.WriteShort(length);
-      if (length < 36 ||
-          object.type().hash_code() == typeid(StreamChunk).hash_code()) {
+      if (length < 36 || object.first->DataAny->type().hash_code() ==
+                             typeid(StreamChunk).hash_code()) {
         byteBuffer.put((byte)0);
         byteBuffer.put(temp.byteStream);
       } else {
@@ -134,27 +155,28 @@ void mindustry::net::PacketSerializer ::write(ByteBuffer &byteBuffer,
     std::cout << "Bug from PacketSerializer " << e.what();
   }
 }
-void mindustry::net::PacketSerializer::writeFramework(ByteBuffer &buffer,
-                                                      boost::any obj) {
-  if (obj.type().hash_code() == typeid(FrameworkMessage::Ping).hash_code()) {
+void mindustry::net::PacketSerializer::writeFramework(
+    ByteBuffer &buffer,
+    java::AnyTwo<java::AnyObject<Packet>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        obj) {
+  if (obj.second->is<FrameworkMessage::Ping>()) {
     auto p = boost::any_cast<FrameworkMessage::Ping>(obj);
     buffer.put((byte)0);
     buffer.WriteInt(p.id);
     buffer.put(p.isReply ? (byte)1 : (byte)0);
-  } else if (obj.type().hash_code() ==
-             typeid(FrameworkMessage::DiscoverHost).hash_code()) {
+  } else if (obj.second->is<FrameworkMessage::DiscoverHost>()) {
     buffer.put((byte)1);
-  } else if (obj.type().hash_code() ==
-             typeid(FrameworkMessage::KeepAlive).hash_code()) {
+  } else if (obj.second->is<FrameworkMessage::KeepAlive>()) {
     buffer.put((byte)2);
-  } else if (obj.type().hash_code() ==
-             typeid(FrameworkMessage::RegisterUDP).hash_code()) {
-    auto p = boost::any_cast<FrameworkMessage::RegisterUDP>(obj);
+  } else if (obj.second->is<FrameworkMessage::RegisterUDP>()) {
+    auto p =
+        boost::any_cast<FrameworkMessage::RegisterUDP>(*obj.second->DataAny);
     buffer.put((byte)3);
     buffer.WriteInt(p.connectionID);
-  } else if (obj.type().hash_code() ==
-             typeid(FrameworkMessage::RegisterTCP).hash_code()) {
-    auto p = boost::any_cast<FrameworkMessage::RegisterTCP>(obj);
+  } else if (obj.second->is<FrameworkMessage::RegisterTCP>()) {
+    auto p =
+        boost::any_cast<FrameworkMessage::RegisterTCP>(*obj.second->DataAny);
     buffer.put((byte)4);
     buffer.WriteInt(p.connectionID);
   }

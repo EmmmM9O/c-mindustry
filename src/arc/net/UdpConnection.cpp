@@ -24,7 +24,9 @@ void arc::net::UdpConnection<T>::connect(int port, std::string ip) {
   }
 }
 template <typename T>
-java::AnyObject<T> arc::net::UdpConnection<T>::readObject() {
+java::AnyTwo<java::AnyObject<T>,
+             java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+arc::net::UdpConnection<T>::readObject() {
   readBuffer.flip();
   auto o = serialization->read(readBuffer);
   readBuffer.clear();
@@ -32,7 +34,10 @@ java::AnyObject<T> arc::net::UdpConnection<T>::readObject() {
 }
 
 template <typename T>
-void arc::net::UdpConnection<T>::send(java::AnyObject<T> obj) {
+void arc::net::UdpConnection<T>::send(
+    java::AnyTwo<java::AnyObject<T>,
+                 java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+        obj) {
   if (socket.connectd) {
     writeBuffer.clear();
     serialization->write(writeBuffer, obj);
