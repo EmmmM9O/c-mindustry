@@ -22,3 +22,5 @@ bool arc::net::FrameworkMessage::isExtend(boost::any object) {
   }
   return false;
 }
+
+std::vector<size_t> arc::net::FrameworkMessage::maps;

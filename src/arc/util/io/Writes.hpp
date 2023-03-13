@@ -19,6 +19,7 @@ public:
   void b(byte b[]);
   void s(short s);
   void str(std::string str);
+  Writes();
 };
 } // namespace io
 } // namespace util

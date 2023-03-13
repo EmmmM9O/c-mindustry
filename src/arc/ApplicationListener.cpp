@@ -9,3 +9,4 @@ void arc::ApplicationListener::resize(int w, int h) {}
 void arc::ApplicationListener::pause() {}
 void arc::ApplicationListener::init() {}
 void arc::ApplicationListener::update() {}
+void arc::ApplicationListener::resume() {}

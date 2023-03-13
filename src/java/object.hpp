@@ -6,8 +6,7 @@
 #include <string_view>
 #include <type_traits>
 template <typename T, typename T1>
-concept AnyType = std::is_base_of<T1, T>()
-| std::is_same_v<T, T1>;
+concept AnyType = std::is_base_of<T1, T>();
 namespace java {
 class Object {
 public:

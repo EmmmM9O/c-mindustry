@@ -56,7 +56,8 @@ public:
   std::map<int, Streamable::StreamBuilder> streams;
   std::map<std::string, boost::any> clientListeners;
   template <typename T, Cons<T> F> void handleClient(F listener);
-  template <typename T> static void registerPacket(int id);
+  template <typename T> static void registerPacket1(int id);
+  template <typename T> static void registerPacket2(int id);
   static java::AnyTwo<
       java::AnyObject<Packet>,
       java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> 

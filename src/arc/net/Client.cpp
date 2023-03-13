@@ -28,7 +28,12 @@ void arc::net::Client<T>::connect(int port, std::string host, int time) {
               o.second->template is<FrameworkMessage::RegisterTCP>()) {
             tcpRegistered = true;
             auto p = FrameworkMessage::RegisterTCP();
-            this->sendUDP(p);
+            java::AnyObject<FrameworkMessage::_FrameworkMessage_> obj(&p);
+
+            java::AnyTwo<java::AnyObject<T>,
+                         java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+                temp(&obj);
+            this->sendUDP(temp);
             break;
           }
         }
@@ -58,10 +63,11 @@ template <typename T> void arc::net::Client<T>::keepAlive() {
   if (difftime(now, time) < 8)
     return;
   localtime(&time);
-  auto pac =
-      java::AnyTwo<java::AnyObject<T>,
-                   java::AnyObject<FrameworkMessage::_FrameworkMessage_>>(
-          &FrameworkMessage::keepAlive);
+  java::AnyObject<FrameworkMessage::_FrameworkMessage_> pa(
+      new FrameworkMessage::KeepAlive);
+  java::AnyTwo<java::AnyObject<T>,
+               java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
+      pac(&pa);
   this->sendTCP(pac);
   this->sendUDP(pac);
   // std::this_thread::sleep_for(std::chrono::seconds(8));

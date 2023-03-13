@@ -15,3 +15,5 @@ void arc::util::io::Writes::b(byte b) { output.WriteByte(b); }
 void arc::util::io::Writes::b(byte b[]) { output.Write(b); }
 void arc::util::io::Writes::s(short s) { output.WriteShort(s); }
 void arc::util::io::Writes::str(std::string str) { output.writeUTF(str); }
+arc::util::io::Writes arc::util::io::Writes::instance;
+arc::util::io::Writes::Writes() {}

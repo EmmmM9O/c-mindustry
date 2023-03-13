@@ -15,3 +15,5 @@ std::vector<byte> arc::util::io::Reads::b(short len) {
   input.readFully(d);
   return d;
 }
+arc::util::io::Reads::Reads() {}
+arc::util::io::Reads arc::util::io::Reads::instance;

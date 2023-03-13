@@ -60,8 +60,11 @@ java::AnyTwo<java::AnyObject<Packet>,
              java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
 mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
   try {
+	  Log::debug("Read Start");
     byte id = buffer.ReadByte();
+    Log::debug("Test1");
     if (id == static_cast<byte>(-2)) {
+	    Log::debug("Test3");
       auto fp = readFramework(buffer);
       auto p = java::AnyObject<FrameworkMessage::_FrameworkMessage_>();
       p.DataObject = &fp;
@@ -70,13 +73,16 @@ mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
           java::AnyObject<Packet>,
           java::AnyObject<FrameworkMessage::_FrameworkMessage_>>(&p);
     } else {
+	    Log::debug("Test2");
       auto packet = Net::newPacketI(id);
+      Log::debug("Test5:${}",packet.key);
       if (packet.key == -1) {
         Log::debug("空指针");
         return java::AnyTwo<
             java::AnyObject<Packet>,
             java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
       }
+      Log::debug("get id:${}",(int)id);
       if (packet.key == 2)
         return packet;
       auto o = packet.first->DataObject;

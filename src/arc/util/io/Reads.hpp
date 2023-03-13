@@ -8,6 +8,7 @@ namespace util {
 namespace io {
 class Reads {
 public:
+Reads();
   static Reads instance;
   java::io::DataInput input;
   Reads(java::io::DataInput input);

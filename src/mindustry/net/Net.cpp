@@ -33,7 +33,7 @@ byte Net::getPacketId(
 template <typename T, Cons<T> F> void Net::handleClient(F listener) {
   clientListeners[typeid(T).name()] = (void (*)(T))listener;
 }
-template <typename T> void Net::registerPacket(int id) {
+template <typename T> void Net::registerPacket1(int id) {
   packetProvs[id] =
       (java::AnyTwo<
           java::AnyObject<Packet>,
@@ -42,21 +42,43 @@ template <typename T> void Net::registerPacket(int id) {
           ->java::AnyTwo<
               java::AnyObject<Packet>,
               java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> {
+		      Log::debug("test6");
+    T p;
+    Log::debug("test7");
+    java::AnyObject<Packet> obj(&p);
+    Log::debug("test8:${}",obj.empty());
+    return java::AnyTwo<
+        java::AnyObject<Packet>,
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(&obj);
+  };
+}
+template <typename T> void Net::registerPacket2(int id) {
+  packetProvs[id] =
+      (java::AnyTwo<
+          java::AnyObject<Packet>,
+          java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(
+              *)())[]()
+          ->java::AnyTwo<
+              java::AnyObject<Packet>,
+              java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> {
+		      
     return java::AnyTwo<
         java::AnyObject<Packet>,
         java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(
-        new T());
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>(new T));
   };
 }
 java::AnyTwo<java::AnyObject<Packet>,
              java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
 Net::newPacketI(unsigned char id) {
   auto key = id & 0xff;
-  if (packetProvs.count(key) < 0) {
+  if (packetProvs.count(key) <= 0) {
+	  Log::debug("No key:${}",(int)key);
     return java::AnyTwo<
         java::AnyObject<Packet>,
         java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>();
   }
+  Log::debug("Test4");
   return packetProvs[key]();
 }
 template <is_Packet T> void Net::handleClientReceived(T pac, boost::any obj) {
