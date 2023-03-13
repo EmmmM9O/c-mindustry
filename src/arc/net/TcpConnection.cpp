@@ -39,7 +39,7 @@ arc::net::TcpConnection<T>::readObject() {
       int lengthLength = serialization->getLengthLength();
       currentObjectLength = serialization->readLength(readBuffer);
       if (readBuffer.remaining() < lengthLength) {
-        std::cout << "Read new Buffer" << std::endl;
+        // std::cout << "Read new Buffer" << std::endl;
         try {
           socket.read(readBuffer, timeout);
         } catch (Struct::TimeOut &e) {
@@ -53,7 +53,9 @@ arc::net::TcpConnection<T>::readObject() {
     readBuffer.streamIter = b;
     return serialization->read(readBuffer);
   } else {
-    return java::AnyTwo<java::AnyObject<T>,java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
+    return java::AnyTwo<
+        java::AnyObject<T>,
+        java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
   }
 }
 template <typename T>

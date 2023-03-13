@@ -42,8 +42,8 @@ public:
   int id;
   int total;
   byte type;
-  virtual void write(arc::util::io::Writes &write) override;
-  virtual void read(arc::util::io::Reads &reads) override;
+  void write(arc::util::io::Writes &write) override;
+  void read(arc::util::io::Reads &reads) override;
   StreamBegin();
 };
 class StreamChunk : public mindustry::net::Packet {

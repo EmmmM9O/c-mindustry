@@ -2,6 +2,7 @@
 
 #include "./Net.hpp"
 #include "Streamable.hpp"
+#include <cstddef>
 using namespace mindustry::net::Packets;
 using namespace arc::util;
 using namespace mindustry::net;
@@ -16,14 +17,14 @@ byte Net::getPacketId(
     auto p = i.second();
     if (p.key == obj.key) {
       if (p.key == 1) {
-        java::AnyObject<Packet> *f1 = p.first, *f2 = obj.first;
-        if (f1->DataAny->type() == f2->DataAny->type())
+        java::AnyObject<Packet> f1 = p.first, f2 = obj.first;
+        if (f1.DataAny.type() == f2.DataAny.type())
           return i.first;
       } else if (p.key == 2) {
         java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>
-            *f1 = p.second,
-            *f2 = obj.second;
-        if (f1->DataAny->type() == f2->DataAny->type())
+            f1 = p.second,
+            f2 = obj.second;
+        if (f1.DataAny.type() == f2.DataAny.type())
           return i.first;
       }
     }
@@ -42,14 +43,14 @@ template <typename T> void Net::registerPacket1(int id) {
           ->java::AnyTwo<
               java::AnyObject<Packet>,
               java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> {
-		      Log::debug("test6");
     T p;
-    Log::debug("test7");
-    java::AnyObject<Packet> obj(&p);
-    Log::debug("test8:${}",obj.empty());
-    return java::AnyTwo<
+    java::AnyObject<Packet> obj(p);
+    obj.DataObject = new T{};
+    java::AnyTwo<
         java::AnyObject<Packet>,
-        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(&obj);
+        java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
+        temp(obj);
+    return temp;
   };
 }
 template <typename T> void Net::registerPacket2(int id) {
@@ -61,7 +62,7 @@ template <typename T> void Net::registerPacket2(int id) {
           ->java::AnyTwo<
               java::AnyObject<Packet>,
               java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>> {
-		      
+
     return java::AnyTwo<
         java::AnyObject<Packet>,
         java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>(
@@ -73,12 +74,11 @@ java::AnyTwo<java::AnyObject<Packet>,
 Net::newPacketI(unsigned char id) {
   auto key = id & 0xff;
   if (packetProvs.count(key) <= 0) {
-	  Log::debug("No key:${}",(int)key);
+    Log::debug("No key:${}", (int)key);
     return java::AnyTwo<
         java::AnyObject<Packet>,
         java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>();
   }
-  Log::debug("Test4");
   return packetProvs[key]();
 }
 template <is_Packet T> void Net::handleClientReceived(T pac, boost::any obj) {
@@ -144,9 +144,9 @@ std::map<
     Net::packetProvs;
 Streamable::_Streamable_ Streamable::StreamBuilder::build() {
   auto s = Net::newPacketI(type);
-  if (s.key != 1 || !s.first->is<Streamable::_Streamable_>())
+  if (s.key != 1 || !s.first.is<Streamable::_Streamable_>())
     return Streamable::_Streamable_();
-  auto p = s.first->cast<Streamable::_Streamable_>();
+  auto p = s.first.cast<Streamable::_Streamable_>();
   p.stream = stream;
   return p;
 }

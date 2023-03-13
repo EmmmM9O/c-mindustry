@@ -1,7 +1,10 @@
 #pragma once
 #include "./Packet.hpp"
+#include <iostream>
 
-void mindustry::net::Packet::read(arc::util::io::Reads &read) {}
+void mindustry::net::Packet::read(arc::util::io::Reads &read) {
+  std::cout << "Test!" << std::endl;
+}
 void mindustry::net::Packet::write(arc::util::io::Writes &write) {}
 void mindustry::net::Packet::read(arc::util::io::Reads &readr, int length) {
   read(readr);

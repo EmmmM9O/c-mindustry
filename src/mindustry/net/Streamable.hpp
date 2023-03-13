@@ -11,7 +11,7 @@ namespace Streamable {
 
 class _Streamable_ : public ::mindustry::net::Packet {
 public:
-  virtual int getPriority() override;
+  int getPriority() override;
   ByteBuffer stream;
 };
 class StreamBuilder {
