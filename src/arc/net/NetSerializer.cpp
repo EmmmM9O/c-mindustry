@@ -9,7 +9,7 @@ void arc::net::NetSerializer<T>::write(
 template <typename T>
 java::AnyTwo<java::AnyObject<T>,
              java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
-arc::net::NetSerializer<T>::read(java::nio::ByteBuffer &buffer) {
+arc::net::NetSerializer<T>::read(java::nio::ByteBuffer *buffer) {
   return java::AnyTwo<java::AnyObject<T>,
                       java::AnyObject<FrameworkMessage::_FrameworkMessage_>>();
 }

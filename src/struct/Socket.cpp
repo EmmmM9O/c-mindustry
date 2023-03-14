@@ -9,16 +9,17 @@ const char *Struct::HostErr::what() const throw() {
 const char *Struct::ConnectEd::what() const throw() { return "Connected"; }
 const char *Struct::UnConnect::what() const throw() { return "Un Connect"; }
 const char *Struct::ConnectErr::what() const throw() { return "ConnectErr"; }
-void Struct::Socket::read(java::nio::ByteBuffer &buf, int time) {
+void Struct::Socket::read(java::nio::ByteBuffer *buf, int time) {
   auto f = std::async(
       std::launch::async, [this]() -> auto{ return dataSync(); });
   if (f.wait_for(std::chrono::seconds(time)) == std::future_status::ready) {
     auto b = f.get();
-    buf.put(b);
-    std::cout << "Socket get A String";
+    std::cout << "Socket get A String ";
     for (auto i : b) {
       std::cout << (int)(byte)i << " ";
+      buf->byteStream.push_back((byte)i);
     }
+    std::cout << std::endl;
   } else {
     throw new TimeOut();
   }

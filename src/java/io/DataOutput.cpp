@@ -1,6 +1,7 @@
 #pragma once
 #include "./DataOutput.hpp"
 #include "DataInput.hpp"
+#include <string>
 
 java::io::DataOutput::DataOutput() { byteStream = std::vector<byte>(); }
 java::io::DataOutput::DataOutput(int l) { byteStream = std::vector<byte>(l); }
@@ -22,8 +23,10 @@ void java::io::DataOutput::Write(byte s[]) { WriteValue(s); }
 void java::io::DataOutput::writeUTF(std::string str) { WriteValue(str); }
 std::string java::io::DataOutput::_str() {
   std::string k = "";
-  for (auto c : byteStream) {
-    k += c;
+  for (int i = 0; i < byteStream.capacity(); i++) {
+    auto c = byteStream[i];
+    k += std::to_string((int)c);
+    k += " ";
   }
   return k;
 }

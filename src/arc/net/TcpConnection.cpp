@@ -35,13 +35,15 @@ java::AnyTwo<java::AnyObject<T>,
 arc::net::TcpConnection<T>::readObject() {
   if (socket.connectd) {
     if (currentObjectLength == 0) {
-      // currentObjectLength=readBuffer.ReadShort();
+     	currentObjectLength=readBuffer.ReadShort();
       int lengthLength = serialization->getLengthLength();
-      currentObjectLength = serialization->readLength(readBuffer);
+     // currentObjectLength = serialization->readLength(readBuffer);
       if (readBuffer.remaining() < lengthLength) {
         // std::cout << "Read new Buffer" << std::endl;
         try {
-          socket.read(readBuffer, timeout);
+          socket.read(&readBuffer, timeout);
+          //arc::util::Log::debug("Now :${}",(int)readBuffer.byteStream[1]);
+
         } catch (Struct::TimeOut &e) {
           throw e;
         }
@@ -49,9 +51,11 @@ arc::net::TcpConnection<T>::readObject() {
     }
     auto b = readBuffer.streamIter;
     int length = currentObjectLength;
+    readBuffer.position(length+2);
+    std::cout<<"Read Pos:"<<readBuffer.position()<<"for"<<
+	    (int)readBuffer.byteStream[readBuffer.position()]<<std::endl;
     currentObjectLength = 0;
-    readBuffer.streamIter = b;
-    return serialization->read(readBuffer);
+    return serialization->read(&readBuffer);
   } else {
     return java::AnyTwo<
         java::AnyObject<T>,

@@ -14,7 +14,7 @@ public:
                      java::AnyObject<FrameworkMessage::_FrameworkMessage_>>);
   virtual java::AnyTwo<java::AnyObject<T>,
                        java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
-  read(java::nio::ByteBuffer &buffer);
+  read(java::nio::ByteBuffer *buffer);
   virtual int getLengthLength();
   virtual void writeLength(java::nio::ByteBuffer &buffer, int length);
   virtual int readLength(java::nio::ByteBuffer &buffer);

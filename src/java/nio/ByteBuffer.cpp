@@ -7,7 +7,7 @@ int java::nio::ByteBuffer::remaining() {
 }
 
 java::nio::ByteBuffer::ByteBuffer() : io::DataOutput(), io::DataInput() {}
-int java::nio::ByteBuffer::size() { return byteStream.size(); }
+int java::nio::ByteBuffer::size() { return byteStream.capacity(); }
 void java::nio::ByteBuffer::write(std::vector<unsigned char> v) {
   for (auto i : v) {
     byteStream.push_back(i);

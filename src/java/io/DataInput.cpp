@@ -34,7 +34,10 @@ char java::io::DataInput::Read2Char() {
 int java::io::DataInput::ReadInt() { return ntohl(ReadValue<int>()); }
 float java::io::DataInput::ReadFloat() { return ReadValue<float>(); }
 long java::io::DataInput::ReadLong() { return ntohl(ReadValue<long>()); }
-byte java::io::DataInput::ReadByte() { return ReadValue<byte>(); }
+byte java::io::DataInput::ReadByte() {
+	auto a=byteStream[streamIter];
+	streamIter++;
+       	return a; }
 
 short java::io::DataInput::ReadShort() { return ntohs(ReadValue<short>()); }
 void java::io::DataInput::readFully(std::vector<byte> &d) {

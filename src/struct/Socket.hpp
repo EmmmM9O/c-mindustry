@@ -44,7 +44,7 @@ public:
   int id;
   bool connectd = false;
   struct sockaddr_in servaddr;
-  void read(java::nio::ByteBuffer &buf, int time);
+  void read(java::nio::ByteBuffer *buf, int time);
   std::string getIpByHost(std::string str);
   Socket(domain dom, type t, int protocol);
   template <typename T> void send(T arr, int length);

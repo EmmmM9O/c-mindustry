@@ -38,9 +38,9 @@ private:
 public:
   virtual java::AnyTwo<java::AnyObject<Packet>,
                        java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
-  read(java::nio::ByteBuffer &buffer) override;
-  arc::net::FrameworkMessage::_FrameworkMessage_
-  readFramework(java::nio::ByteBuffer &buffer);
+  read(java::nio::ByteBuffer *buffer) override;
+  java::AnyObject<FrameworkMessage::_FrameworkMessage_>
+  readFramework(java::nio::ByteBuffer *buffer);
   virtual void
   write(java::nio::ByteBuffer &buffer,
         java::AnyTwo<java::AnyObject<Packet>,

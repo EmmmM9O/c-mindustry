@@ -8,7 +8,7 @@
 typedef unsigned char byte;
 namespace java {
 namespace nio {
-class ByteBuffer : virtual public io::DataInput, virtual public io::DataOutput {
+class ByteBuffer : public io::DataInput, public io::DataOutput {
 
 public:
   int remaining();

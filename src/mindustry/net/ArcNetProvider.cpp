@@ -1,5 +1,6 @@
 #pragma once
 #include "./ArcNetProvider.hpp"
+#include <iterator>
 using namespace arc::net;
 using namespace arc::util;
 using namespace arc::util::io;
@@ -10,7 +11,7 @@ void ArcNetProvider::connectClient(std::string ip, int port,
   if (debug)
     Log::debug("Connect!");
   client.close();
-  client.connect(port, ip, 5);
+  client.connect(port, ip, 10);
   success();
 }
 void ArcNetProvider::disconnectClient() { client.close(); }
@@ -58,17 +59,20 @@ void mindustry::net::_NetListener_ ::received(
 }
 java::AnyTwo<java::AnyObject<Packet>,
              java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
-mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
+mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer *buffer) {
   try {
-    byte id = buffer.ReadByte();
-    if (id == static_cast<byte>(-2)) {
+    auto id = buffer->byteStream[buffer->position()];
+    buffer->streamIter++;
+    Log::info("Packet type:${} pos:${}", (int)id,buffer->position()-1);
+    if ((int)id == 254) {
       auto fp = readFramework(buffer);
-      auto p = java::AnyObject<FrameworkMessage::_FrameworkMessage_>();
-      p.DataObject = &fp;
-      p.DataAny = fp;
+      // auto p = java::AnyObject<FrameworkMessage::_FrameworkMessage_>();
+      //  p.DataObject = &fp;
+      // p.DataAny = fp;
+      Log::debug("New FPacket:${}", fp.DataAny.type().name());
       return java::AnyTwo<
           java::AnyObject<Packet>,
-          java::AnyObject<FrameworkMessage::_FrameworkMessage_>>(p);
+          java::AnyObject<FrameworkMessage::_FrameworkMessage_>>(fp);
     } else {
       auto packet = Net::newPacketI(id);
       if (packet.key == -1) {
@@ -81,32 +85,33 @@ mindustry::net::PacketSerializer ::read(java::nio::ByteBuffer &buffer) {
         return packet;
       // auto o = packet.first.DataObject;
       Log::debug("New Packet ${} size: ${} postion:${} name:${}", (int)id,
-                 buffer.byteStream.size(), buffer.position(),
+                 buffer->byteStream.size(), buffer->position(),
                  packet.first.DataAny.type().name());
-      int length = buffer.ReadShort() & 0xffff;
-      byte compression = buffer.ReadByte();
+      int length = buffer->ReadShort() & 0xffff;
+      byte compression = buffer->ReadByte();
 
       temp.clear();
       if ((int)compression == 0) {
         temp.position(0);
         temp.limit(length);
-        temp.put(buffer.byteStream);
+        temp.put(buffer->byteStream);
         temp.position(0);
-        auto r = Reads(DataInput(buffer.byteStream));
+        auto r = Reads(DataInput(buffer->byteStream));
         packet.first.DataObject->read(r, length);
         temp.byteStream = r.input.byteStream;
-        buffer.position(buffer.position() + temp.position());
+        buffer->position(buffer->position() + temp.position());
+        Log::debug("Now Pos:${}", buffer->position());
       } else {
         // Log::debug("Packet Test");
-        int read = buffer.remaining();
+        int read = buffer->remaining();
         // LE wait
         Log::debug("No Le4");
         throw "No Le4";
         temp.position(0);
         temp.limit(length);
-        auto r = Reads(DataInput(buffer.byteStream));
+        auto r = Reads(DataInput(buffer->byteStream));
         packet.first.DataObject->read(r, length);
-        buffer.position(read + buffer.position());
+        buffer->position(read + buffer->position());
       }
       return packet;
     }
@@ -180,30 +185,41 @@ void mindustry::net::PacketSerializer::writeFramework(
     buffer.WriteInt(p.connectionID);
   }
 }
-FrameworkMessage::_FrameworkMessage_
-mindustry::net::PacketSerializer::readFramework(java::nio::ByteBuffer &buffer) {
-  byte id = buffer.ReadByte();
+java::AnyObject<FrameworkMessage::_FrameworkMessage_>
+mindustry::net::PacketSerializer::readFramework(java::nio::ByteBuffer *buffer) {
+	auto id = buffer->byteStream[buffer->position()];                                                  buffer->streamIter++;
+  java::AnyObject<FrameworkMessage::_FrameworkMessage_> t;
   if (id == 0) {
     FrameworkMessage::Ping p;
-    p.id = buffer.ReadInt();
-    p.isReply = (int)buffer.ReadByte() == 1;
-    return p;
+    p.id = buffer->ReadInt();
+    p.isReply = (int)buffer->ReadByte() == 1;
+    t.DataAny = p;
+    t.DataObject = &p;
+    return t;
   }
   if (id == 1) {
-    return FrameworkMessage::discoverHost;
+    t.DataAny = FrameworkMessage::discoverHost;
+    t.DataObject = new FrameworkMessage::DiscoverHost{};
+    return t;
   }
   if (id == 2) {
-    return FrameworkMessage::keepAlive;
+    t.DataAny = FrameworkMessage::keepAlive;
+    t.DataObject = new FrameworkMessage::KeepAlive{};
+    return t;
   }
   if (id == 3) {
     FrameworkMessage::RegisterUDP p;
-    p.connectionID = buffer.ReadInt();
-    return p;
+    p.connectionID = buffer->ReadInt();
+    t.DataAny = p;
+    t.DataObject = &p;
+    return t;
   }
   if (id == 4) {
     FrameworkMessage::RegisterTCP p;
-    p.connectionID = buffer.ReadInt();
-    return p;
+    p.connectionID = buffer->ReadInt();
+    t.DataAny = p;
+    t.DataObject = &p;
+    return t;
   }
   throw "Unknown framework message!";
 }

@@ -1,5 +1,6 @@
 #include "../../java/nio/ByteBuffer.cpp"
 #include "../../struct/Socket.cpp"
+#include "../util/Log.cpp"
 #include "./FrameworkMessage.cpp"
 #include "./NetSerializer.cpp"
 #include <boost/any.hpp>

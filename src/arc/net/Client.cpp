@@ -33,6 +33,7 @@ void arc::net::Client<T>::connect(int port, std::string host, int time) {
             java::AnyTwo<java::AnyObject<T>,
                          java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
                 temp(obj);
+	    Log::info("Send UDP!");
             this->sendUDP(temp);
             break;
           }

@@ -10,7 +10,7 @@ using namespace mindustry::gen;
 using namespace arc::util;
 int main() {
   Call::registerPackets();
-  Log::info("Net Test!");
+  Log::info("Net Test! look forword -2:${}",(int)(unsigned char)-2);
   mindustry::Vars::net.connect("n2.akiracloud.net", 10404,
                                []() -> void { Log::info("Connect success"); });
 
