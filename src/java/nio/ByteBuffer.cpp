@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./ByteBuffer.hpp"
+#include <vector>
 
 int java::nio::ByteBuffer::remaining() {
   return byteStream.max_size() - streamIter;
@@ -51,4 +52,11 @@ void java::nio::ByteBuffer::limit(int length) {
   if (length > byteStream.max_size()) {
     byteStream.resize(length);
   }
+}
+void java::nio::ByteBuffer::since(int pos) {
+  std::vector<byte> temp;
+  for (int i = pos; i < byteStream.capacity(); i++) {
+    temp.push_back(byteStream[i]);
+  }
+  byteStream = temp;
 }

@@ -27,6 +27,7 @@ public:
   int position();
   void position(int p);
   void limit(int length);
+  void since(int pos);
 };
 } // namespace nio
 } // namespace java

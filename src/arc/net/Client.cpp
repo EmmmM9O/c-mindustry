@@ -24,16 +24,19 @@ void arc::net::Client<T>::connect(int port, std::string host, int time) {
         if (o.key == -1)
           break;
         if (!tcpRegistered) {
-          if (o.key == 2 &&
-              o.second.template is<FrameworkMessage::RegisterTCP>()) {
+          if (o.key == 2 && o.second.DataAny.type() ==
+                                typeid(FrameworkMessage::RegisterTCP)) {
             tcpRegistered = true;
-            auto p = FrameworkMessage::RegisterTCP();
-            java::AnyObject<FrameworkMessage::_FrameworkMessage_> obj(&p);
-
+            FrameworkMessage::RegisterTCP p =
+                o.second.template cast<FrameworkMessage::RegisterTCP>();
+            // auto p = FrameworkMessage::RegisterTCP();
+            java::AnyObject<FrameworkMessage::_FrameworkMessage_> obj;
+            obj.DataObject = new FrameworkMessage::RegisterTCP{};
+            obj.DataAny = p;
             java::AnyTwo<java::AnyObject<T>,
                          java::AnyObject<FrameworkMessage::_FrameworkMessage_>>
                 temp(obj);
-	    Log::info("Send UDP!");
+            util::Log::info("Send UDP!${}", p.connectionID);
             this->sendUDP(temp);
             break;
           }
@@ -46,8 +49,12 @@ void arc::net::Client<T>::connect(int port, std::string host, int time) {
           }
         }
         this->notifyReceived(o);
-      } catch (Struct::TimeOut &e) {
-        break;
+      } catch (...) {
+      }
+      try {
+        auto obj = this->udp.readObject();
+        this->notifyReceived(obj);
+      } catch (...) {
       }
     }
     keepAlive();

@@ -28,7 +28,7 @@ java::AnyTwo<java::AnyObject<T>,
              java::AnyObject<arc::net::FrameworkMessage::_FrameworkMessage_>>
 arc::net::UdpConnection<T>::readObject() {
   readBuffer.flip();
-  auto o = serialization->read(readBuffer);
+  auto o = serialization->read(&readBuffer);
   readBuffer.clear();
   return o;
 }
